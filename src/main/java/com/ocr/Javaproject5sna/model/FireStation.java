@@ -25,6 +25,10 @@ public class FireStation {
 	public Set<String> getAddresses() {
 		return addresses.stream().collect(Collectors.toSet());
 	}
+	
+	public void setAddresses(Set<String> addresses) {
+		this.addresses = addresses;
+	}
 
 	@Override
 	public String toString() {

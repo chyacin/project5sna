@@ -18,6 +18,12 @@ public class MedicalRecord {
 		this.lastName = lastName;
 		this.birthDate = birthDate;
 	}
+	
+	public MedicalRecord(String firstName, String lastName, String birthDate, Set<String> medication, Set<String> allergies) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.birthDate = birthDate;
+	}
 
 	public MedicalRecord addMedication(String medication) {
 		medications.add(medication);
@@ -51,6 +57,14 @@ public class MedicalRecord {
 
 	public Set<String> getAllergies() {
 		return allergies.stream().collect(Collectors.toSet());
+	}
+	
+	public void setMedications(Set<String> medications) {
+		this.medications = medications;
+	}
+	
+	public void setAllergies(Set<String> allergies) {
+		this.allergies = allergies;
 	}
 
 	@Override
