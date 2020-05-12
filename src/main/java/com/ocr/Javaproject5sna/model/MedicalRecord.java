@@ -47,8 +47,12 @@ public class MedicalRecord {
 		return firstName.concat(" ") + lastName;
 	}
 
-	public String getbirthDate() {
+	public String getBirthDate() {
 		return birthDate;
+	}
+	
+	public void setBirthDate(String birthDate) {
+		this.birthDate = birthDate;
 	}
 
 	public Set<String> getMedications() {
