@@ -1,5 +1,7 @@
 package com.ocr.Javaproject5sna.service;
 
+import java.util.List;
+
 import com.ocr.Javaproject5sna.model.MedicalRecord;
 import com.ocr.Javaproject5sna.repository.MedicalRecordRepository;
 
@@ -12,6 +14,11 @@ public class MedicalRecordService {
 	public void createMedicalRecord(MedicalRecord medicalRecord) {
 		
 		medicalRecordRepository.createMedicalRecord(medicalRecord);
+	}
+	
+	public List<MedicalRecord> getAllMedicalRecord(){
+		
+		return medicalRecordRepository.findAll();
 	}
 	
 	public void getMedicalRecordByName(String firstName, String lastName) {

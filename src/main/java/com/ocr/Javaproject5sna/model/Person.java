@@ -1,5 +1,15 @@
 package com.ocr.Javaproject5sna.model;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Set;
+
+import com.ocr.Javaproject5sna.model.MedicalRecord;
+import com.ocr.Javaproject5sna.repository.MedicalRecordRepository;
+
+
 public class Person {
  
 		public String firstName;
@@ -89,5 +99,7 @@ public class Person {
 	                ", email='" + email + '\'' +
 	                '}';
 	    }	
+	
+		
 }
 

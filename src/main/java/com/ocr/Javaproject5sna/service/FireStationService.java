@@ -1,6 +1,8 @@
 package com.ocr.Javaproject5sna.service;
 
 
+import java.util.List;
+
 import com.ocr.Javaproject5sna.model.FireStation;
 import com.ocr.Javaproject5sna.repository.FireStationRepository;
 
@@ -18,6 +20,11 @@ public class FireStationService {
 	public void getStationFromStationAddress(String address) {
 		
 		 fireStationRepository.findStation(address);
+	}
+	
+	public List<FireStation> getAllFireStation(){
+		
+		return fireStationRepository.findAll();
 	}
 	
 	public void updateAddressFSNumber(String stationNumber, String address) {

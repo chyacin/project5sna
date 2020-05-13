@@ -92,8 +92,8 @@ public class JsonParseData {
 		    });
 			System.out.println();
 			personRepository.printAll();
-			medicalRecordRepository.printAll();
 			fireStationRepository.printAll();
+            medicalRecordRepository.printAll();
 			
 		}	
 		catch(IOException e) {
