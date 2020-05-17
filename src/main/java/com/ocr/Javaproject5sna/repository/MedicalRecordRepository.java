@@ -48,7 +48,7 @@ public class MedicalRecordRepository {
         return medical;
     }
 
-    //update an existing medical record
+    //update an existing medical record.
     public void updateMedicalRecord(MedicalRecord medical) {
         MedicalRecord updateMedical = findMedicalRecord(medical.getFirstName(), medical.getLastName());
         updateMedical.setBirthDate(medical.getBirthDate());

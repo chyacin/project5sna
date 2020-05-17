@@ -53,8 +53,10 @@ public class FireStationRepository {
     }
 
     //delete an existing firestation
-    public void deleteStation(String address) {
-        FireStation deleteStation = findStation(address);
+    public void deleteStation(String stationNumber) {
+        FireStation deleteStation = findStation(stationNumber);
         fireStationList.remove(deleteStation);
     }
+    
+
 }
