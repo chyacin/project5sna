@@ -2,6 +2,7 @@ package com.ocr.Javaproject5sna.controller;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,20 +12,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ocr.Javaproject5sna.model.FireStation;
-import com.ocr.Javaproject5sna.repository.FireStationRepository;
 import com.ocr.Javaproject5sna.service.FireStationService;
 
-
+@RestController
 public class FireStationController {
+	
+	
 
 	Logger logger = LoggerFactory.getLogger(FireStationController.class);
 	
-	@Autowired
+	
 	FireStationService fireStationService;
 	
-	FireStation fireStation;
+	
+	@Autowired
+    public FireStationController(FireStationService fireStationService) {
+		   this.fireStationService = fireStationService;
+	}
 	
 	//fireStation endPoints
 	@PostMapping("/firestation")
@@ -40,7 +47,7 @@ public class FireStationController {
 		fireStationService.updateAddressFSNumber(stationNumber, address);
 	}
 	
-	@GetMapping("/firestation")
+	@GetMapping("/firestations")
 	public List<FireStation> getFireStation(){
 		
 		logger.info("GET /firestation called");
@@ -53,4 +60,31 @@ public class FireStationController {
 		
 		fireStationService.deleteFSAddressMapping(stationNumber, address);
 	}
-}
+	
+	//firestation Url
+	
+	@GetMapping("/firestation")
+	public JSONObject getPersonByStationNumber(@RequestParam String stationNumber) {
+		
+		return fireStationService.getPersonDetailsFromFireStationNumber(stationNumber);
+	}
+	
+	@GetMapping("/phoneAlert")
+	public List<String> getPersonByPhoneAlert(@RequestParam String stationNumber) {
+
+		return fireStationService.getPersonPhoneNumberFromWithInEachFireStation(stationNumber);
+    }
+	
+	@GetMapping("/fire")
+	public JSONObject getPersonByAddress(@RequestParam String address) {
+		
+		return fireStationService.getAddressFromEachStation(address);
+	}
+	
+	@GetMapping("/stations")
+	public List<JSONObject> getPersonsByFireStationNumber(@RequestParam String stationNumber) {
+		
+		return fireStationService.getPersonByHouseHoldsInEachStationNumber(stationNumber);
+	}
+}	
+	
