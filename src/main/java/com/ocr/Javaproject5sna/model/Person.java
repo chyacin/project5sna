@@ -11,7 +11,12 @@ import com.ocr.Javaproject5sna.repository.MedicalRecordRepository;
 
 
 public class Person {
+	
+MedicalRecordRepository medicalRecordRepository;	
  
+ public Person() {
+	 
+ }
 		public String firstName;
 		public String lastName;
 		public String phone;
@@ -100,6 +105,49 @@ public class Person {
 	                '}';
 	    }	
 	
+	 // calling someone's medical record by using the PersonClass
+		
+		public MedicalRecord getMedicalRecord() {
+			
+		   List<MedicalRecord> medicalRecords = medicalRecordRepository.findAll();
+			
+		   for(MedicalRecord medicalRecord: medicalRecords) {
+			   if(medicalRecord.getFirstName().equals(firstName)
+				  && medicalRecord.getLastName().equals(lastName))
+				   
+				   return medicalRecord;
+			   
+		   }
+		   return null;
+		}
+		
+		public String getBirthDate() {
+			return this.getMedicalRecord().getBirthDate();
+		}
+		
+		public Set<String> getMedication() {
+			return this.getMedicalRecord().getMedications();
+		}
+		
+		public Set<String> getAllergies() {
+			return this.getMedicalRecord().getAllergies();		
+		}
+		
+		// creating a method to get current age
+		
+		public int getAge() {
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
+			
+			LocalDate today = LocalDate.now();
+			
+			LocalDate birthDate = LocalDate.parse(this.getBirthDate(), formatter);
+			
+			Period age = Period.between(birthDate, today);
+			
+			return age.getYears();
+			
+		}
 		
 }
 

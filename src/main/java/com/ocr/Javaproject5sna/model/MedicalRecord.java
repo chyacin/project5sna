@@ -6,11 +6,17 @@ import java.util.stream.Collectors;
 
 public class MedicalRecord {
 	
+     public MedicalRecord() {
+		
+	 }
+	
 	private String firstName;
 	private String lastName;
 	private String birthDate;
 	private Set<String> medications = new HashSet<>();
 	private Set<String> allergies = new HashSet<>();
+	
+	
 	
 
 	public MedicalRecord(String firstName, String lastName, String birthDate) {
@@ -38,9 +44,17 @@ public class MedicalRecord {
 	public String getFirstName() {
 		return firstName;
 	}
+	
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
 	public String getLastName() {
 		return lastName;
+	}
+	
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getName() {
