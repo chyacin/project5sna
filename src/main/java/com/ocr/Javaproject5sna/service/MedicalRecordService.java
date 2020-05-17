@@ -2,18 +2,28 @@ package com.ocr.Javaproject5sna.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ocr.Javaproject5sna.model.MedicalRecord;
 import com.ocr.Javaproject5sna.repository.MedicalRecordRepository;
 
+@Service
 public class MedicalRecordService {
 	
 	MedicalRecordRepository medicalRecordRepository;
 	
-	MedicalRecord medicalRecord;
+	
+	
+    @Autowired
+    public MedicalRecordService(MedicalRecordRepository medicalRecordRepository) {
+    	this.medicalRecordRepository = medicalRecordRepository;
+    }
 
-	public void createMedicalRecord(MedicalRecord medicalRecord) {
+	public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord) {
 		
-		medicalRecordRepository.createMedicalRecord(medicalRecord);
+	 return  medicalRecordRepository.createMedicalRecord(medicalRecord);
+		  	  
 	}
 	
 	public List<MedicalRecord> getAllMedicalRecord(){
@@ -21,19 +31,6 @@ public class MedicalRecordService {
 		return medicalRecordRepository.findAll();
 	}
 	
-	public void getMedicalRecordByName(String firstName, String lastName) {
-		
-		medicalRecordRepository.findMedicalRecord(firstName, lastName);
-	}
 	
-	public void updateMedicalRecord(MedicalRecord medicalRecord) {
-		
-		medicalRecordRepository.updateMedicalRecord(medicalRecord);
-	}
-	
-	public void deleteMedicalRecord(String firstName, String lastName) {
-		
-		medicalRecordRepository.deleteMedicalRecord(firstName, lastName);
-	}
 
 }
