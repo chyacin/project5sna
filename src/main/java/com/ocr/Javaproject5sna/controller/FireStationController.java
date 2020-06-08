@@ -70,9 +70,9 @@ public class FireStationController {
 	}
 	
 	@GetMapping("/phoneAlert")
-	public List<String> getPersonByPhoneAlert(@RequestParam String stationNumber) {
+	public List<String> getPersonByPhoneAlert(@RequestParam String firestation) {
 
-		return fireStationService.getPersonPhoneNumberFromWithInEachFireStation(stationNumber);
+		return fireStationService.getPersonPhoneNumberFromWithInEachFireStation(firestation);
     }
 	
 	@GetMapping("/fire")
@@ -81,10 +81,10 @@ public class FireStationController {
 		return fireStationService.getAddressFromEachStation(address);
 	}
 	
-	@GetMapping("/stations")
-	public List<JSONObject> getPersonsByFireStationNumber(@RequestParam String stationNumber) {
+	@GetMapping("/flood/stations")
+	public List<JSONObject> getPersonsByFireStationNumber(@RequestParam String stations) {
 		
-		return fireStationService.getPersonByHouseHoldsInEachStationNumber(stationNumber);
+		return fireStationService.getPersonByHouseHoldsInEachStationNumber(stations);
 	}
 }	
 	
