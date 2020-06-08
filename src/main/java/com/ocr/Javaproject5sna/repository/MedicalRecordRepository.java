@@ -12,12 +12,13 @@ import com.ocr.Javaproject5sna.model.MedicalRecord;
 @Repository
 public class MedicalRecordRepository {
 
-	private List<MedicalRecord> medicalRecordList;
+	private static List<MedicalRecord> medicalRecordList = new ArrayList<>();
 
-    @Autowired
-    public MedicalRecordRepository() {
-        this.medicalRecordList = new ArrayList<>();
-    }
+	
+	
+	public void setMedicalRecord(List<MedicalRecord> medicalRecordList) {
+		MedicalRecordRepository.medicalRecordList = medicalRecordList;
+	}
 
     // get list of all medical records
     public List<MedicalRecord> findAll() {
@@ -61,4 +62,6 @@ public class MedicalRecordRepository {
         MedicalRecord deleteMedical = findMedicalRecord(firstName, lastName);
         medicalRecordList.remove(deleteMedical);
     }
+    
+    
 }

@@ -62,4 +62,29 @@ public class PersonRepository {
 		Person deletePerson = findPerson(firstName, lastName);
 		personList.remove(deletePerson);
 	}
+	
+	 public int getNumberOfAdults() {
+			
+			int numberOfAdults = 0;
+			for(Person person: personList) {
+				if(person.getAge() > 18) {
+					numberOfAdults++;
+				}
+			}
+			return numberOfAdults;
+		}
+		
+		public int getNumberOfChildren() {
+			
+			int numberOfChildren = 0;
+			for(Person person: personList) {
+				if(person.getAge() <= 18) {
+					numberOfChildren++;
+				}
+			}
+			return numberOfChildren;
+		}
+
+		
+		
 }

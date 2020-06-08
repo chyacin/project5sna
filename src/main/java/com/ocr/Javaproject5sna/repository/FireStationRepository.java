@@ -11,13 +11,12 @@ import com.ocr.Javaproject5sna.model.FireStation;
 @Repository
 public class FireStationRepository {
 
-	private List<FireStation> fireStationList;
-
-    @Autowired
-    public FireStationRepository() {
-        this.fireStationList = new ArrayList<>();
-    }
-
+	private  List<FireStation> fireStationList = new ArrayList<>();
+ 	
+	public void setFireStation(List<FireStation> fireStationList) {
+		this.fireStationList = fireStationList;
+	}
+    
     //get list of all firestations
     public List<FireStation> findAll() {
         return fireStationList;
@@ -35,21 +34,42 @@ public class FireStationRepository {
         for (FireStation fireStation : fireStationList) {
             if (fireStation.getStationNumber().equals(stationNumber)) {
                 return fireStation;
+                
             }
         }
         return null;
     }
+    
+    
 
-    //add a new firestation
+//    //add a new firestation
     public FireStation createStation(FireStation fireStation) {
-        fireStationList.add(fireStation);
-        return fireStation;
+        if(!alreadyExist(fireStation)) {       	
+         fireStationList.add(fireStation);  
+         return fireStation;
+        }
+        else {
+        FireStation existingFireStation = findStation(fireStation.getStationNumber());
+        existingFireStation.getAddresses().addAll(fireStation.getAddresses());
+        updateStation(existingFireStation);
+        }
+    	return null;
     }
+    
+
 
     //update an existing firestation
     public void updateStation(FireStation fireStation) {
-        FireStation updateStation = findStation(fireStation.getStationNumber());
-        updateStation.setAddresses(fireStation.getAddresses());
+    	for (FireStation station : fireStationList) {
+            if (fireStation.getStationNumber().equals(station.getStationNumber())) {
+                
+            	fireStationList.remove(station);
+                fireStationList.add(fireStation);
+                break;
+            }
+            
+        }
+        
     }
 
     //delete an existing firestation
@@ -58,5 +78,8 @@ public class FireStationRepository {
         fireStationList.remove(deleteStation);
     }
     
+    private boolean alreadyExist(FireStation fireStation) {
+    	return fireStationList.stream().filter(e -> e.getStationNumber().equalsIgnoreCase(fireStation.getStationNumber())).count() >= 1;
+    }
 
 }
