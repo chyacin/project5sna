@@ -30,9 +30,6 @@ public class MedicalRecordServiceTest {
 	
 	@Mock
 	MedicalRecordRepository medicalRecordRepository;
-	
-	
-	
 		
 	@Test
 	public void createMedicalRecord_returnCreatedMedicalRecord() {
