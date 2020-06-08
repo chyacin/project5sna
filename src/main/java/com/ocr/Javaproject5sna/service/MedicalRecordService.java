@@ -9,7 +9,7 @@ import com.ocr.Javaproject5sna.model.MedicalRecord;
 import com.ocr.Javaproject5sna.repository.MedicalRecordRepository;
 
 @Service
-public class MedicalRecordService {
+public class MedicalRecordService implements IMedicalRecordService {
 	
 	MedicalRecordRepository medicalRecordRepository;
 	

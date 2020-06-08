@@ -15,14 +15,11 @@ import com.ocr.Javaproject5sna.repository.FireStationRepository;
 import com.ocr.Javaproject5sna.repository.PersonRepository;
 
 @Service
-public class FireStationService {
+public class FireStationService implements IFireStationService {
 	
 	
 	FireStationRepository fireStationRepository;
 
-	
-	
-	
 	PersonRepository personRepository;
 	
 	@Autowired
@@ -30,6 +27,8 @@ public class FireStationService {
 		this.fireStationRepository = fireStationRepository;
 		this.personRepository = personRepository;
 	}
+	
+	
 	
 	public FireStation createFSAddressmapping(String stationNumber, String address) {
 		
@@ -94,31 +93,60 @@ public class FireStationService {
 	
 	//Url end points
 	
+	//http://localhost:8080/firestation?stationNumber=<station_number>
 	public JSONObject getPersonDetailsFromFireStationNumber(String stationNumber) {
 		
-		JSONObject fireStationDetails = new JSONObject();
+		JSONObject personDetailsFromStationNumber = new JSONObject();
+		List<JSONObject> amountOfKidsPlusAdults= new ArrayList<>();
+		List<String> personsDetails = new ArrayList<>();
+		// FireStation fireStation = fireStationRepository.findStation(stationNumber);
+		//	if(fireStation!=null)  {
 		
-		 FireStation fireStation = fireStationRepository.findStation(stationNumber);
-			if(fireStation!=null)  {
-			
-			fireStationDetails.put("persons", fireStation.getPersonInEachStation());
-			fireStationDetails.put("numberOfAdults", fireStation.getNumberOfAdults());
-			fireStationDetails.put("numberOfChildren", fireStation.getNumberOfChildren());
-		}
-	    return fireStationDetails;
-	} 
+		   for(FireStation fireStation: fireStationRepository.findAll()) {
+			  if(fireStation.getStationNumber().equals(stationNumber)) {
+				  
+				  for(Person person : fireStation.getPersonList()) {
+					  personsDetails.add(person.getFirstName()); 
+						personsDetails.add(person.getLastName());
+						personsDetails.add(person.getAddress());
+						personsDetails.add(person.getPhone());
+				  }
+				
+		
+				  
+				JSONObject summaryDetails = new JSONObject();		
+			    summaryDetails.put("numberOfChildren", fireStation.getNumberOfChildren());
+			    summaryDetails.put("numberOfAdults", fireStation.getNumberOfAdults());
+			    
+			    amountOfKidsPlusAdults.add(summaryDetails);
+			    
+	         }
+           }
+		   personDetailsFromStationNumber.put("personsDetails", personsDetails);
+		   personDetailsFromStationNumber.put("amountOfKidsPlusAdults", amountOfKidsPlusAdults);
+		   
+		  
+	       return personDetailsFromStationNumber;
+	    
+	    
+    } 
+
+	     			
 	
+	//Url http://localhost:8080/phoneAlert?firestation=<firestation_number>
 	public List<String> getPersonPhoneNumberFromWithInEachFireStation(String stationNumber) {
+	
 		
 		List<Person> personInEachFireStation = new ArrayList<>();
 		List<String> phoneNumberOfEachPerson = new ArrayList<>();
 		
-		 FireStation fireStation = fireStationRepository.findStation(stationNumber);
-			if(fireStation!=null)  {
-			personInEachFireStation = fireStation.getPersonInEachStation();
-		}
+		FireStation fireStation = fireStationRepository.findStation(stationNumber);
+		   if(fireStation!=null)  {
+			  personInEachFireStation = fireStation.getPersonList();
+		   }
 	
 	    for(Person person: personInEachFireStation) {
+	    	phoneNumberOfEachPerson.add(person.getName());
 		    phoneNumberOfEachPerson.add(person.getPhone());
 	    }
 	       return phoneNumberOfEachPerson;
@@ -162,7 +190,7 @@ public class FireStationService {
 	}
 	
 	//return houseHolds with persons in each fireStation jurisdiction
-	
+	//http://localhost:8080/flood/stations?stations=%3Ca
 	public List<JSONObject> getPersonByHouseHoldsInEachStationNumber(String stationNumber) {
 		
 		List<String> addressesInFireStation = new ArrayList<>();

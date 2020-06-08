@@ -11,7 +11,7 @@ import com.ocr.Javaproject5sna.model.Person;
 import com.ocr.Javaproject5sna.repository.PersonRepository;
  
 @Service
-public class PersonService {
+public class PersonService implements IPersonService{
 	
 	PersonRepository personRepository;
 	
@@ -37,7 +37,7 @@ public class PersonService {
 	
 	//Url endPoints methods
 	
-	//return personInfo which includes name, address, age, email and medical information.
+	//return personInfo which includes full name, address, age, email and medical information.
 	
 	public List<JSONObject> getPersonInfo(String firstName, String lastName) {
 			
@@ -78,11 +78,10 @@ public class PersonService {
 	}
 	
 	// get a list of children under 18 at each address and other people at the same address
-
 	public JSONObject getChildrenFromEachAddress(String address) {
 		
 		List<Person> personsInAddress = new ArrayList<>();
-		List<Person> adults = new ArrayList<>();
+		List<String> adults = new ArrayList<>();
 		List<JSONObject> everyChildDetails = new ArrayList<>();
 		
 		for(Person person: personRepository.findAll()) {
@@ -90,6 +89,7 @@ public class PersonService {
 				personsInAddress.add(person);
 			}
 		}
+			
 		for(Person person: personsInAddress) {
 			if(person.getAge() <= 18) {
 			   JSONObject childDetails = new JSONObject();
@@ -99,18 +99,20 @@ public class PersonService {
 			   
 			   everyChildDetails.add(childDetails);
 			}
-			else {
-				adults.add(person);
-			}
+			else {	
+			     adults.add(person.getName());
+			}		
 		}
 		if(everyChildDetails.isEmpty()) {
 			return null;
 		}
 		else {
 			JSONObject familyWithChildrenPlusAdults = new JSONObject();
-			familyWithChildrenPlusAdults.put("everyChildDetails", everyChildDetails);
-			familyWithChildrenPlusAdults.put("adults", adults);
 			
+			familyWithChildrenPlusAdults.put("everyChildDetails", everyChildDetails);
+			if(adults != null) {
+				familyWithChildrenPlusAdults.put("adults", adults);
+			}
 			return familyWithChildrenPlusAdults;
 		}
 	}
