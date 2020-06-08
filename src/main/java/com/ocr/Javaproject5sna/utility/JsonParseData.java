@@ -3,7 +3,14 @@ package com.ocr.Javaproject5sna.utility;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -22,6 +29,8 @@ import com.ocr.Javaproject5sna.repository.PersonRepository;
 @Component
 public class JsonParseData {
 
+	Logger log = LoggerFactory.getLogger(JsonParseData.class);
+	
 	@Autowired
 	private PersonRepository personRepository;
 
@@ -47,49 +56,20 @@ public class JsonParseData {
 			Any any = jsoniter.readAny();
 
 			//using any container, we can iterate over every person from given data
-			Any anyPerson = any.get("persons");
-			anyPerson.forEach(p -> personRepository.createPerson(new Person(p.get("firstName").toString(),
-					(p.get("lastName").toString()),
-					(p.get("phone").toString()),
-					(p.get("zip").toString()),
-					(p.get("address").toString()),
-					(p.get("city").toString()),
-					(p.get("email").toString()))));
-			
+			processPersonData(any);
+							
 			//using any container, we can iterate over every firestation record from given data
-	    	Any fireStationAny = any.get("firestations");
-			fireStationAny.forEach(anyStation -> { 
-				FireStation fireStation = fireStationRepository.findStation(anyStation.get("station").toString());
-
-				if (fireStation == null) {
-					fireStation = new FireStation(anyStation.get("station").toString());
-					fireStationRepository.createStation(fireStation);
-				}
-				fireStation.addAddress(anyStation.get("address").toString());
-				fireStationRepository.updateStation(fireStation);
-			});
-			
+			processFireStationData(any);
+							
 			//using any container, we can iterate over every medical record from given data
-			Any medicalAny = any.get("medicalrecords");
+			processMedicalRecordData(any);
 			
+			//Associate MedicalRecord to Person
+			associatePersonToMedicalRecord();
 			
-			medicalAny.forEach(anyMedicalRecord -> {
-	    		
-		    	MedicalRecord medicalRecord = medicalRecordRepository.createMedicalRecord(new MedicalRecord(
-		    			anyMedicalRecord.get("firstName").toString(),
-		    			anyMedicalRecord.get("lastName").toString(),
-		    			anyMedicalRecord.get("birthdate").toString()));
-		    	
-		    	Any medications = anyMedicalRecord.get("medications");
-		    	if(medications.size() > 0)
-		    			medications.forEach(a -> medicalRecord.addMedication(a.toString()));
-		    			
-		    	Any allergies = anyMedicalRecord.get("allergies");
-		    	if(allergies.size() > 0)
-		    			allergies.forEach(a -> medicalRecord.addAllergies(a.toString()));
-		    			
-		    	medicalRecordRepository.updateMedicalRecord(medicalRecord);
-		    });
+			//Associate Firestation to Person
+			associatePersonToFireStation();
+			
 			System.out.println();
 			personRepository.printAll();
 			fireStationRepository.printAll();
@@ -98,6 +78,84 @@ public class JsonParseData {
 		}	
 		catch(IOException e) {
 			//log error
+		}
+	}
+
+
+	private void processMedicalRecordData(Any any) {
+		Any medicalAny = any.get("medicalrecords");
+		
+		
+		medicalAny.forEach(anyMedicalRecord -> {
+			
+			MedicalRecord medicalRecord = new MedicalRecord(
+					anyMedicalRecord.get("firstName").toString(),
+					anyMedicalRecord.get("lastName").toString(),
+					anyMedicalRecord.get("birthdate").toString());
+			
+			Any medications = anyMedicalRecord.get("medications");
+			if(medications.size() > 0)
+					medications.forEach(a -> medicalRecord.addMedication(a.toString()));
+					
+			Any allergies = anyMedicalRecord.get("allergies");
+			if(allergies.size() > 0)
+					allergies.forEach(a -> medicalRecord.addAllergies(a.toString()));
+			
+			medicalRecordRepository.findAll().add(medicalRecord);});
+			
+	}
+
+	private void processPersonData(Any any) {
+		
+		Any anyPerson = any.get("persons");
+		
+		anyPerson.forEach(p -> personRepository.createPerson(new Person(p.get("firstName").toString(),
+				(p.get("lastName").toString()),
+				(p.get("phone").toString()),
+				(p.get("zip").toString()),
+				(p.get("address").toString()),
+				(p.get("city").toString()),
+				(p.get("email").toString()))));
+	
+		
+	}
+
+	private void processFireStationData(Any any) {
+		
+	Map<String, FireStation> fireStationMap = new HashMap<>();
+	
+	Any fireStationAny = any.get("firestations");
+    
+         fireStationAny.forEach(anyStation -> {
+         fireStationMap.compute(anyStation.get("station").toString(),
+         (k, v) -> v == null ? new FireStation(anyStation.get("station").toString())
+         .addAddress(anyStation.get("address").toString()) : v.addAddress(anyStation.get("address").toString()));});
+    
+    fireStationRepository.setFireStation(fireStationMap.values().stream().collect(Collectors.toList()));
+    	
+	}
+	
+	private void associatePersonToMedicalRecord() {
+		for(Person person:personRepository.findAll()) {
+			for(MedicalRecord medicalRecord:medicalRecordRepository.findAll()) {
+				if(person.getName().equals(medicalRecord.getName())) {
+					person.setMedicalRecord(medicalRecord);
+				}
+			}
+		}
+	}
+	
+	private void associatePersonToFireStation() {
+		for(Person person: personRepository.findAll()) {
+			for(FireStation fireStation: fireStationRepository.findAll()) {
+				
+				for(String address: fireStation.getAddresses()) {
+					if(person.getAddress().equals(address)){
+						fireStation.addPerson(person);	
+						
+				   }
+				}
+			}
 		}
 	}
 }
