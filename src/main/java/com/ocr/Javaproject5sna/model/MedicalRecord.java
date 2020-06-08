@@ -1,5 +1,8 @@
 package com.ocr.Javaproject5sna.model;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,10 +87,26 @@ public class MedicalRecord {
 	public void setAllergies(Set<String> allergies) {
 		this.allergies = allergies;
 	}
+		 
+    public int getAge() {
+		
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
+				
+		LocalDate today = LocalDate.now();
+				
+		LocalDate birthDate = LocalDate.parse(this.getBirthDate(), formatter);
+				
+		Period age = Period.between(birthDate, today);
+				
+		return age.getYears();
+				
+	}
 
 	@Override
 	public String toString() {
-		return this.getName().concat(": ") + String.join(", medications :", medications) + String.join(", Allergies : ", allergies);
-	}
-
+		return "MedicalRecord [firstName=" + firstName + ", lastName=" + lastName + ", birthDate=" + birthDate
+				+ ", medications=" + medications + ", allergies=" + allergies + ", getAge()=" + getAge() + "]";
+	} 
+    
+    
 }

@@ -5,30 +5,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import com.ocr.Javaproject5sna.model.Person;
-import com.ocr.Javaproject5sna.repository.PersonRepository;
+
 
 public class FireStation {
 	
-	PersonRepository personRepository;
-	
+
 	public FireStation() {
 		
 	}
-
-	private Set<String> addresses = new HashSet<>();
 	
-	private String address;
+	private Set<String> addresses = new HashSet<>();	
 	private String stationNumber;
+	
 
+	public List<Person> personList = new ArrayList<>();
+	
+	
 	public FireStation(String stationNumber) {
 		this.stationNumber = stationNumber;
+		this.personList = new ArrayList<>();
 	}
-	
-	public void setAddress(String address) {
-		this.address = address;
-	}
+
 
 	public FireStation addAddress(String address) {
 		addresses.add(address);
@@ -36,7 +34,7 @@ public class FireStation {
 	}
 
 	public String getStationNumber() {
-		return stationNumber;
+		return this.stationNumber;
 	}
 	
 	public void setStationNumber(String stationNumber) {
@@ -55,35 +53,47 @@ public class FireStation {
     	addresses.remove(address);
     }
 	
-	@Override
-	public String toString() {
-		return stationNumber.concat(": ") + String.join(", ", addresses);
+	//associate FireStation class to Person class
+	public void addPerson(Person person) {
+		this.personList.add(person);
 	}
-
-
-	public List<Person> getPersonInEachStation(){
-		
-		List<Person> allPersons = personRepository.findAll();
-		
-		List<Person> personsInEachFireStation = new ArrayList<>();
-		
-		for(Person person: allPersons) {
-			if(this.addresses.contains(person.address))
-				personsInEachFireStation.add(person);
-		}
-		
-		return personsInEachFireStation;
+//	
+//	public void setPerson(Person person) {
+//		this.person = person;
+//	}
+//	
+//	public Person getPerson() {
+//	   return this.person;	
+//	}
+//	
+//	public String getFirstName() {
+//		return this.person.getFirstName();	
+//	}
+//	
+//	public String getLastName() {
+//		return this.person.getLastName();
+//	}
+//	
+//	public String getAddress() {
+//		return this.person.getAddress();
+//	}
+//	
+//	public String getPhone() {
+//		return this.person.getPhone();
+//	}
+//	
+	
+	public List<Person> getPersonList() {
+		return this.personList;
 	}
-    
-    public int getNumberOfAdults() {
-		
-		List<Person> persons = personRepository.findAll();
-		
+	
+	
+	public int getNumberOfAdults() {
+			
 		int numberOfAdults = 0;
-		
-		for(Person person: persons) {
-			if(person.getAge() > 18) {
-				numberOfAdults++;
+		for(Person person: personList) {
+			if(person.getAge()>18) {
+			   numberOfAdults++;
 			}
 		}
 		return numberOfAdults;
@@ -91,15 +101,24 @@ public class FireStation {
 	
 	public int getNumberOfChildren() {
 		
-		List<Person> persons = personRepository.findAll();
-		
 		int numberOfChildren = 0;
-		
-		for(Person person: persons) {
-			if(person.getAge() <= 18) {
-				numberOfChildren++;
-			}
-		}
+		for(Person person: personList) {
+			if(person.getAge()<= 18) {
+			   numberOfChildren++;
+		    }
+	    }
 		return numberOfChildren;
 	}
+
+
+	@Override
+	public String toString() {
+		return "FireStation [addresses=" + addresses + ", stationNumber=" + stationNumber + "]";
+	}
+
+
+	
+
+
+	
 }

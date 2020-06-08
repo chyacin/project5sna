@@ -1,59 +1,61 @@
 package com.ocr.Javaproject5sna.model;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+
 import java.util.Set;
 
 import com.ocr.Javaproject5sna.model.MedicalRecord;
-import com.ocr.Javaproject5sna.repository.MedicalRecordRepository;
-
 
 public class Person {
 	
-MedicalRecordRepository medicalRecordRepository;	
  
- public Person() {
+      public Person() {
 	 
- }
-		public String firstName;
-		public String lastName;
-		public String phone;
-		public String zip;
-		public String address;
-		public String city;
-		public String email;
+      }
+      
+      public String firstName;
+      public String lastName;
+      public String phone;
+      public String zip;
+      public String address;
+      public String city;
+      public String email;
+		
+      public MedicalRecord medicalRecord;
+		
 
-		public Person(String firstName, String lastName, String phone, String zip, String address, String city, String email) {
-			this.firstName = firstName;
-			this.lastName = lastName;
-			this.phone = phone;
-			this.zip = zip;
-			this.address = address;
-			this.city = city;
-			this.email = email;
-		}
+      public Person(String firstName, String lastName, String phone, String zip, String address, String city, String email) {
+		     this.firstName = firstName;
+		     this.lastName = lastName;
+		     this.phone = phone;
+		     this.zip = zip;
+		     this.address = address;
+		     this.city = city;
+		     this.email = email;
+     }
 
 
-		public String getFirstName() {
-	        return firstName;
-	    }
+        public String getFirstName() {
+	        return this.firstName;
+}
 
 	    public void setFirstName(String firstName) {
 	        this.firstName = firstName;
 	    }
 
 	    public String getLastName() {
-	        return lastName;
+	        return this.lastName;
 	    }
 
 	    public void setLastName(String lastName) {
 	        this.lastName = lastName;
 	    }
+	    
+	    public String getName() {
+			return firstName.concat(" ") + lastName;
+		}
 
 	    public String getAddress() {
-	        return address;
+	        return this.address;
 	    }
 
 	    public void setAddress(String address) {
@@ -61,7 +63,7 @@ MedicalRecordRepository medicalRecordRepository;
 	    }
 
 	    public String getCity() {
-	        return city;
+	        return this.city;
 	    }
 
 	    public void setCity(String city) {
@@ -69,7 +71,7 @@ MedicalRecordRepository medicalRecordRepository;
 	    }
 
 	    public String getZip() {
-	        return zip;
+	        return this.zip;
 	    }
 
 	    public void setZip(String zip) {
@@ -77,7 +79,7 @@ MedicalRecordRepository medicalRecordRepository;
 	    }
 
 	    public String getPhone() {
-	        return phone;
+	        return this.phone;
 	    }
 
 	    public void setPhone(String phone) {
@@ -85,47 +87,27 @@ MedicalRecordRepository medicalRecordRepository;
 	    }
 
 	    public String getEmail() {
-	        return email;
+	        return this.email;
 	    }
 
 	    public void setEmail(String email) {
 	        this.email = email;
 	    }
-
-	    @Override
-	    public String toString() {
-	        return "Person{" +
-	                "firstName='" + firstName + '\'' +
-	                ", lastName='" + lastName + '\'' +
-	                ", address='" + address + '\'' +
-	                ", city='" + city + '\'' +
-	                ", zip='" + zip + '\'' +
-	                ", phone='" + phone + '\'' +
-	                ", email='" + email + '\'' +
-	                '}';
-	    }	
-	
-	 // calling someone's medical record by using the PersonClass
-		
-		public MedicalRecord getMedicalRecord() {
-			
-		   List<MedicalRecord> medicalRecords = medicalRecordRepository.findAll();
-			
-		   for(MedicalRecord medicalRecord: medicalRecords) {
-			   if(medicalRecord.getFirstName().equals(firstName)
-				  && medicalRecord.getLastName().equals(lastName))
-				   
-				   return medicalRecord;
-			   
-		   }
-		   return null;
-		}
-		
-		public String getBirthDate() {
-			return this.getMedicalRecord().getBirthDate();
-		}
-		
-		public Set<String> getMedication() {
+	    
+	    //associate MedicalRecord with Person
+	    public void setMedicalRecord(MedicalRecord medicalRecord) {
+	        this.medicalRecord = medicalRecord;
+	    }
+	    
+	    public MedicalRecord getMedicalRecord() {
+	    	return this.medicalRecord;
+	    }
+	    
+	    public String getBirthDate() {
+	    	return this.medicalRecord.getBirthDate();
+	    }
+	    
+	    public Set<String> getMedication() {
 			return this.getMedicalRecord().getMedications();
 		}
 		
@@ -133,21 +115,20 @@ MedicalRecordRepository medicalRecordRepository;
 			return this.getMedicalRecord().getAllergies();		
 		}
 		
-		// creating a method to get current age
+		
 		
 		public int getAge() {
-			
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/d/yyyy");
-			
-			LocalDate today = LocalDate.now();
-			
-			LocalDate birthDate = LocalDate.parse(this.getBirthDate(), formatter);
-			
-			Period age = Period.between(birthDate, today);
-			
-			return age.getYears();
-			
+			return this.medicalRecord.getAge();
 		}
 		
+		
+				
+	    @Override
+		public String toString() {
+			return "Person [firstName=" + firstName + ", lastName=" + lastName + ", phone=" + phone + ", zip=" + zip
+					+ ", address=" + address + ", city=" + city + ", email=" + email + "]";
+		}
+	      
+       
 }
 
