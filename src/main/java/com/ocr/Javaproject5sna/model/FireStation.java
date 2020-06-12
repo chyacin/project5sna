@@ -15,8 +15,14 @@ public class FireStation {
 		
 	}
 	
+    public FireStation(String stationNumber, String address) {
+		this.stationNumber = stationNumber;
+		this.addresses.add(address);
+    	
+	}
 	private Set<String> addresses = new HashSet<>();	
 	private String stationNumber;
+	
 	
 
 	public List<Person> personList = new ArrayList<>();
@@ -40,7 +46,7 @@ public class FireStation {
 	public void setStationNumber(String stationNumber) {
 		this.stationNumber = stationNumber;
 	}
-
+	
 	public Set<String> getAddresses() {
 		return addresses.stream().collect(Collectors.toSet());
 	}
@@ -57,31 +63,6 @@ public class FireStation {
 	public void addPerson(Person person) {
 		this.personList.add(person);
 	}
-//	
-//	public void setPerson(Person person) {
-//		this.person = person;
-//	}
-//	
-//	public Person getPerson() {
-//	   return this.person;	
-//	}
-//	
-//	public String getFirstName() {
-//		return this.person.getFirstName();	
-//	}
-//	
-//	public String getLastName() {
-//		return this.person.getLastName();
-//	}
-//	
-//	public String getAddress() {
-//		return this.person.getAddress();
-//	}
-//	
-//	public String getPhone() {
-//		return this.person.getPhone();
-//	}
-//	
 	
 	public List<Person> getPersonList() {
 		return this.personList;
@@ -115,6 +96,9 @@ public class FireStation {
 	public String toString() {
 		return "FireStation [addresses=" + addresses + ", stationNumber=" + stationNumber + "]";
 	}
+
+
+	
 
 
 	

@@ -56,6 +56,9 @@ public class FireStationRepository {
     	return null;
     }
     
+    public void addFireStation(FireStation fireStation) {
+    	fireStationList.add(fireStation);
+    }
 
 
     //update an existing firestation
