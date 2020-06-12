@@ -2,6 +2,7 @@ package com.ocr.Javaproject5sna.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,14 @@ public class PersonService implements IPersonService{
 	
 	//Url endPoints methods
 	
-	//return personInfo which includes full name, address, age, email and medical information.
-	
+	/*return personInfo which includes full name, address, age, email and medical information.
+	 * below is the url address
+	 * http://localhost:8080/personInfo?firstName=%3CfirstName%3E&lastName=%3ClastName
+	 */
+	@SuppressWarnings("unchecked")
 	public List<JSONObject> getPersonInfo(String firstName, String lastName) {
 			
-	    List<JSONObject> allPersonsInfo = new ArrayList<>();
+	    List<JSONObject> personMedicalInfo = new ArrayList<>(); 
 			
 		for(Person person: personRepository.findAll()) {
 			if(person.getFirstName().equals(firstName)
@@ -57,38 +61,41 @@ public class PersonService implements IPersonService{
 				personInfo.put("medicationWithDosage", person.getMedication());
 				personInfo.put("allergies", person.getAllergies());
 				
-				allPersonsInfo.add(personInfo);
+				personMedicalInfo.add(personInfo);
 			}
 		}
-		return allPersonsInfo;
+		return personMedicalInfo;
 	}
 	
-	//return community email
-	
+	/*returns email address of everyone in the city
+	 * below is the url address
+	 * http://localhost:8080/communityEmail?city=%3Ccity
+	 */
 	public List<String> getPersonsEmailAddress(String city) {
 		
-		List<String> personsEmailAddress = new ArrayList<>();
+		List<String> personEmail = new ArrayList<>();
 		
 		for(Person person: personRepository.findAll()) {
 			if(person.getCity().equals(city)) {
-				personsEmailAddress.add(person.getEmail());
+				personEmail.add(person.getEmail());
+				
 			}
 		}
-		return personsEmailAddress;
+		return personEmail;
 	}
 	
-	// get a list of children under 18 at each address and other people at the same address
+	/* returns a list of children under 18 at each address and the adults at the same address
+	 * if there is no child at the address, it returns empty.
+	 * below is the url address
+     http://localhost:8080/childAlert?address=%3Caddress 
+     */
+	@SuppressWarnings("unchecked")
 	public JSONObject getChildrenFromEachAddress(String address) {
 		
 		List<Person> personsInAddress = new ArrayList<>();
-		List<String> adults = new ArrayList<>();
-		List<JSONObject> everyChildDetails = new ArrayList<>();
-		
-		for(Person person: personRepository.findAll()) {
-			if(person.getAddress().equals(address)) {
-				personsInAddress.add(person);
-			}
-		}
+		List<JSONObject> adults = new ArrayList<>();
+		List<JSONObject> children = new ArrayList<>();	
+		personsInAddress = personRepository.findAll().stream().filter(e -> e.getAddress().equals(address)).collect(Collectors.toList());
 			
 		for(Person person: personsInAddress) {
 			if(person.getAge() <= 18) {
@@ -96,24 +103,31 @@ public class PersonService implements IPersonService{
 			   childDetails.put("firstName", person.getFirstName());
 			   childDetails.put("lastName", person.getLastName());
 			   childDetails.put("age", person.getAge());
+			   childDetails.put("address", person.getAddress());	
 			   
-			   everyChildDetails.add(childDetails);
+			   children.add(childDetails);   
 			}
 			else {	
-			     adults.add(person.getName());
+				JSONObject adult = new JSONObject();
+			     adult.put("firstName", person.getFirstName());
+			     adult.put("lastName", person.getLastName());
+			     adult.put("address", person.getAddress());
+
+			   adults.add(adult);  
 			}		
-		}
-		if(everyChildDetails.isEmpty()) {
-			return null;
+		} 
+		if(children.isEmpty()) {
+			return new JSONObject();
 		}
 		else {
-			JSONObject familyWithChildrenPlusAdults = new JSONObject();
+			JSONObject adultsPlusChildren = new JSONObject();
 			
-			familyWithChildrenPlusAdults.put("everyChildDetails", everyChildDetails);
+			adultsPlusChildren.put("children", children);
 			if(adults != null) {
-				familyWithChildrenPlusAdults.put("adults", adults);
+				adultsPlusChildren.put("adults", adults);
+					
 			}
-			return familyWithChildrenPlusAdults;
+			return adultsPlusChildren;
 		}
 	}
 }

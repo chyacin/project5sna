@@ -9,16 +9,15 @@ import java.util.stream.Collectors;
 
 public class MedicalRecord {
 	
-     public MedicalRecord() {
+   public MedicalRecord() {
 		
-	 }
+   }
 	
 	private String firstName;
 	private String lastName;
 	private String birthDate;
 	private Set<String> medications = new HashSet<>();
 	private Set<String> allergies = new HashSet<>();
-	
 	
 	
 
