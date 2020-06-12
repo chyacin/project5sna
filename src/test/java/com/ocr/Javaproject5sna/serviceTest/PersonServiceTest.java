@@ -7,9 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+
 
 import com.ocr.Javaproject5sna.model.MedicalRecord;
 import com.ocr.Javaproject5sna.model.Person;
@@ -17,14 +15,17 @@ import com.ocr.Javaproject5sna.repository.PersonRepository;
 import com.ocr.Javaproject5sna.service.PersonService;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@SpringBootTest
+
 @RunWith(MockitoJUnitRunner.class)
 public class PersonServiceTest {
 	
@@ -33,9 +34,6 @@ public class PersonServiceTest {
 	
 	@Mock
 	PersonRepository personRepository;
-
-	
-	
 	
 	@Test
 	public void createPerson_returnCreatedPerson() {
@@ -92,55 +90,50 @@ public class PersonServiceTest {
 		when(personRepository.findAll()).thenReturn(person);
 		
 		//Act		
-		List<Person> findAllPerson = personService.getAllPerson();
+		List<Person> result = personService.getAllPerson();
 		
 		//Assert
-		assertEquals(2, findAllPerson.size());
+		assertEquals(2, result.size());
+		assertTrue(result.equals(person));
 		
 	}
 		
 	@Test
-	public void jsonObject_getPersonInfo_returnPersonInfo() throws Exception {
-		
-		//List<JSONObject> allInfoOfPerson = new ArrayList<>();
+	public void jsonObject_getPersonInfo_returnPersonInfo() {
 		
 		//Arrange
-		 Set<String> medications = new HashSet<String>();
-		 medications.add("aznol:350mg, hydrapermazol:100mg");
-	
-	     Set<String> allergies = new HashSet<>();
-		 allergies.add("nilliacilan");
-		 
-		 JSONObject personInfo = new JSONObject(); 
-		 personInfo.put("firstName", "John");
-		// personInfo.put("John", person.setFirstName(firstName);getFirstName());	
-		 personInfo.put("lastName", "Boyd");
-		 personInfo.put("address", "1509 Culver St");
-		 personInfo.put("age", "22");
-		 personInfo.put("email", "jaboyd@email.com");
-		 personInfo.put("medication", medications);
-		 personInfo.put("allergies", allergies);
-		 
-	     //allInfoOfPerson.add(personInfo);
-		Person person = new Person();
-		 person.setFirstName("John");
-		 person.setLastName("Boyd");
-		 person.setAddress("1509 Culver St");
-		 person.setEmail("jaboyd@email.com");
-		 
-		 MedicalRecord medicalRecord = new MedicalRecord();
-		 medicalRecord.setBirthDate("19/07/1998");
-		 medicalRecord.setMedications(medications);
-		 medicalRecord.setAllergies(allergies);
-		 
-         person.setMedicalRecord(medicalRecord);
-         personRepository.createPerson(person);
+		Set<String> medications = new HashSet<String>();
+		medications.add("aznol:350mg, hydrapermazol:100mg");
+	    Set<String> allergies = new HashSet<>();
+		allergies.add("nilliacilan");
+		MedicalRecord medicalRecord = new MedicalRecord();
+		medicalRecord.setBirthDate("01/07/1998");
+		medicalRecord.setMedications(medications);
+		medicalRecord.setAllergies(allergies);
 		
+		String firstName = "John";
+		String lastName = "Boyd";
+		Person person = new Person(firstName, lastName, "888-545-5656", "5400", "1509 Culver St", "Culver", "jaboyd@email.com");
+		person.setMedicalRecord(medicalRecord);
+		Person person1 = new Person("Soh", "Dod", "1509 Culver", "gaboyd@email", "888-345-345", "Sulver", "5400");
+		
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		persons.add(person1);
+			
+		Mockito.when(personRepository.findAll()).thenReturn(persons);
+			 
 		//Act
-		 List<JSONObject> newPersonInfo = personService.getPersonInfo("John", "Boyd");
+        List<JSONObject> result = personService.getPersonInfo(firstName, lastName);
 		 
 		//Assert
-		 assertEquals(personInfo, newPersonInfo);
+    	assertNotNull(result);
+    	System.out.println(result);
+		assertEquals(1, result.size());
+		//extracting the json using a key
+		assertEquals(firstName, result.get(0).get("firstName"));
+		assertEquals(lastName, result.get(0).get("lastName"));
+		
 			 	
 	}
 		
@@ -148,23 +141,64 @@ public class PersonServiceTest {
 	public void getPersonsEmail_returnPersonsEmail() {
 		
 		//Arrange
-		List<String> personsEmailInTheCity = new ArrayList<>();
-		
-		Person person = new Person();
-		person.setCity("Culver");
-		person.setEmail("jaboyd@email.com");
-		personRepository.createPerson(person);
-		
-		personsEmailInTheCity.add("jaboyd@email.com");
-		personsEmailInTheCity.add("Culver");
-		
+		String city = "Culver";
+		String email = "jaboyd@email.com";
+		Person person = new Person("John", "Boyd", "888-545-5656", "5400", "1509 Culver St", city, email);	
+		Person person1 = new Person("John", "Boyd", "1509 Culver", "gaboyd@email.com", "888-345-345", "Sulver", "5400");
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		persons.add(person1);
+		Mockito.when(personRepository.findAll()).thenReturn(persons);
 		
 		//Act
-		List<String> emailAddressInCity = personService.getPersonsEmailAddress("Culver");
+		List<String> result = personService.getPersonsEmailAddress("Culver");
 		
 		//Assert
-		assertEquals(personsEmailInTheCity, emailAddressInCity);
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(email, result.get(0));
 		
+		
+	}
+	
+	@Test
+	public void jsonObject_getChildrenFromEachAddress_returnChildrenFromEachAddress() {
+		
+		//Arrange
+		MedicalRecord medicalRecord = new MedicalRecord();
+		medicalRecord.setBirthDate("03/06/1984");
+		MedicalRecord medicalRecord1 = new MedicalRecord();
+		medicalRecord1.setBirthDate("09/06/2017");
+			
+		String address = "1509 Culver St";
+		
+		Person person = new Person("John", "Boyd", "888-545-5656", "5400", address, "Culver", "jaboyd@email.com");	
+		person.setMedicalRecord(medicalRecord);
+		Person person1 = new Person("Roger", "Boyd", "888-545-5656", "5400", address, "Culver", "jaboyd@email.com");
+		person1.setMedicalRecord(medicalRecord1);
+        Person person2 = new Person("Sonny", "Boy", "888-545-5656", "5400", "17 Culver St", "Culver", "jaboyd@email.com");
+		
+        
+		List<Person> persons = new ArrayList<>();
+		persons.add(person);
+		persons.add(person1);
+		persons.add(person2);
+		Mockito.when(personRepository.findAll()).thenReturn(persons);
+
+		//Act
+		JSONObject result = personService.getChildrenFromEachAddress(address);
+		List<JSONObject> children = (List<JSONObject>) result.get("children");
+		List<JSONObject> adults = (List<JSONObject>) result.get("adults");
+		
+		//Assert
+		assertNotNull(result);
+		assertEquals(1, children.size());
+		assertEquals(1, adults.size()); 
+		assertEquals(2, result.size());
+		assertEquals(address, children.get(0).get("address"));
+		assertEquals(address, adults.get(0).get("address"));
+		
+
 	}
 
 }
