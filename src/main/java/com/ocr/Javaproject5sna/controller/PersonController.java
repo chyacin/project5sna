@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ocr.Javaproject5sna.dto.ChildAlertDTO;
+import com.ocr.Javaproject5sna.dto.PersonMedicalInfoDTO;
 import com.ocr.Javaproject5sna.model.Person;
 import com.ocr.Javaproject5sna.repository.PersonRepository;
 import com.ocr.Javaproject5sna.service.PersonService;
@@ -24,69 +26,69 @@ import com.ocr.Javaproject5sna.service.PersonService;
 @RestController
 public class PersonController {
 
-	Logger logger =LoggerFactory.getLogger(PersonController.class);
-	
+	Logger logger = LoggerFactory.getLogger(PersonController.class);
+
 	@Autowired
 	PersonService personService;
-	
+
 	@Autowired
-    PersonRepository personRepository;
-	
+	PersonRepository personRepository;
+
 	Person person;
-	
+
 	@Autowired
 	public PersonController(PersonService personService) {
 		this.personService = personService;
 	}
-	
+
 	@PostMapping("/person")
 	public void createPerson(@RequestBody @Valid Person person, BindingResult bindingResult) {
-		
-		if(!bindingResult.hasErrors()) {
+
+		if (!bindingResult.hasErrors()) {
 			personService.createPerson(person);
 		}
 	}
-	
+
 	@PutMapping("/person")
 	public void updatePerson(@RequestBody Person person) {
-		
+
 		personRepository.updatePerson(person);
 	}
-	
-	@GetMapping("/persons") 
+
+	@GetMapping("/persons")
 	public List<Person> getAllPerson() {
-		
+
 		logger.info("GET /person called");
-		
+
 		return personService.getAllPerson();
 	}
-	
-	@DeleteMapping("/person") 
-	public void deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
-		
+
+	@DeleteMapping("/person")
+	public void deletePerson(@RequestParam(value = "firstName") String firstName,
+			@RequestParam(value = "lastName") String lastName) {
+
 		personRepository.deletePerson(firstName, lastName);
-	}	
-		
-	//Person Url
-	
+	}
+
+	// Person Url
+
 	@GetMapping("/childAlert")
-	public JSONObject getChildrenAlert(@RequestParam String address) {
-		
+	public ChildAlertDTO getChildrenAlert(@RequestParam(value = "address") String address) {
+
 		return personService.getChildrenFromEachAddress(address);
 	}
-	
+
 	@GetMapping("/personInfo")
-	public List<JSONObject> getPersonByInfo(@RequestParam String firstName, @RequestParam String lastName) {
-		
+	public List<PersonMedicalInfoDTO> getPersonByInfo(@RequestParam(value = "firstName") String firstName,
+			@RequestParam(value = "lastName") String lastName) {
+
 		return personService.getPersonInfo(firstName, lastName);
 	}
-	
+
 	@GetMapping("/communityEmail")
-	public List<String> getCommunityEmail(@RequestParam String city) {
-		
+	public List<String> getCommunityEmail(@RequestParam(value = "city") String city) {
+
 		return personService.getPersonsEmailAddress(city);
 	}
-	
-	
-	
+
 }

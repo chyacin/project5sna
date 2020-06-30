@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ocr.Javaproject5sna.dto.EveryHouseHoldInfoDTO;
+import com.ocr.Javaproject5sna.dto.PersonDetailsFromStationNumberDTO;
+import com.ocr.Javaproject5sna.dto.PersonInfoPlusAddressFromEachStationDTO;
 import com.ocr.Javaproject5sna.model.FireStation;
 import com.ocr.Javaproject5sna.service.FireStationService;
 
@@ -64,7 +67,7 @@ public class FireStationController {
 	//firestation Url
 	
 	@GetMapping("/firestation")
-	public JSONObject getPersonByStationNumber(@RequestParam String stationNumber) {
+	public PersonDetailsFromStationNumberDTO getPersonByStationNumber(@RequestParam(value = "stationNumber") String stationNumber) {
 		
 		return fireStationService.getPersonDetailsFromFireStationNumber(stationNumber);
 	}
@@ -72,17 +75,17 @@ public class FireStationController {
 	@GetMapping("/phoneAlert")
 	public List<String> getPersonByPhoneAlert(@RequestParam String firestation) {
 
-		return fireStationService.getPersonPhoneNumberFromWithInEachFireStation(firestation);
+		return fireStationService.getPersonPhoneNumberFromFireStationNumber(firestation);
     }
 	
 	@GetMapping("/fire")
-	public JSONObject getPersonByAddress(@RequestParam String address) {
+	public PersonInfoPlusAddressFromEachStationDTO getPersonByAddress(@RequestParam(value = "address") String address) {
 		
 		return fireStationService.getAddressFromEachStation(address);
 	}
 	
 	@GetMapping("/flood/stations")
-	public List<JSONObject> getPersonsByFireStationNumber(@RequestParam String stations) {
+	public List<EveryHouseHoldInfoDTO> getPersonsByFireStationNumber(@RequestParam(value = "stations") String stations) {
 		
 		return fireStationService.getPersonByHouseHoldsInEachStationNumber(stations);
 	}
