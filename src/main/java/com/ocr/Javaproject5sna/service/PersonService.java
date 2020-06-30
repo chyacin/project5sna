@@ -5,129 +5,129 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ocr.Javaproject5sna.dto.ChildAlertDTO;
+import com.ocr.Javaproject5sna.dto.PersonNamePlusAgeDTO;
+import com.ocr.Javaproject5sna.dto.PersonMedicalInfoDTO;
 import com.ocr.Javaproject5sna.model.Person;
 import com.ocr.Javaproject5sna.repository.PersonRepository;
- 
+
 @Service
-public class PersonService implements IPersonService{
-	
+public class PersonService implements IPersonService {
+
+	Logger logger = LoggerFactory.getLogger(PersonService.class);
+
 	PersonRepository personRepository;
-	
+
 	Person person;
-	
-	
+
 	@Autowired
 	public PersonService(PersonRepository personRepository) {
 		this.personRepository = personRepository;
 	}
 
 	public Person createPerson(Person person) {
-			
+
 		return personRepository.createPerson(person);
 	}
-	
-	public List<Person> getAllPerson(){
-		
-		 return personRepository.findAll();
+
+	public List<Person> getAllPerson() {
+
+		return personRepository.findAll();
 	}
-	
-	
-	
-	//Url endPoints methods
-	
-	/*return personInfo which includes full name, address, age, email and medical information.
-	 * below is the url address
-	 * http://localhost:8080/personInfo?firstName=%3CfirstName%3E&lastName=%3ClastName
+
+	// Url endPoints methods
+
+	/*
+	 * return personInfo which includes full name, address, age, email and medical
+	 * information. Below is the url address
+	 * http://localhost:8080/personInfo?firstName=%3CfirstName%3E&lastName=%
+	 * 3ClastName
 	 */
-	@SuppressWarnings("unchecked")
-	public List<JSONObject> getPersonInfo(String firstName, String lastName) {
-			
-	    List<JSONObject> personMedicalInfo = new ArrayList<>(); 
-			
-		for(Person person: personRepository.findAll()) {
-			if(person.getFirstName().equals(firstName)
-			   && person.getLastName().equals(lastName)) {
-				
-				JSONObject personInfo = new JSONObject();
-				
-				personInfo.put("firstName", person.getFirstName());
-				personInfo.put("lastName", person.getLastName());
-				personInfo.put("address", person.getAddress());
-				personInfo.put("age", person.getAge());
-				personInfo.put("email", person.getEmail());
-				personInfo.put("medicationWithDosage", person.getMedication());
-				personInfo.put("allergies", person.getAllergies());
-				
+
+	public List<PersonMedicalInfoDTO> getPersonInfo(String firstName, String lastName) {
+
+		ArrayList<PersonMedicalInfoDTO> personMedicalInfo = new ArrayList<>();
+
+		for (Person person : personRepository.findAll()) {
+			if (person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
+
+				PersonMedicalInfoDTO personInfo = new PersonMedicalInfoDTO();
+
+				personInfo.setFirstName(person.getFirstName());
+				personInfo.setLastName(person.getLastName());
+				personInfo.setAddress(person.getAddress());
+				personInfo.setAge(person.getAge());
+				personInfo.setEmail(person.getEmail());
+				personInfo.setMedications(person.getMedication());
+				personInfo.setAllergies(person.getAllergies());
+
 				personMedicalInfo.add(personInfo);
 			}
 		}
 		return personMedicalInfo;
 	}
-	
-	/*returns email address of everyone in the city
-	 * below is the url address
+
+	/*
+	 * returns email address of everyone in the city below is the url address
 	 * http://localhost:8080/communityEmail?city=%3Ccity
 	 */
 	public List<String> getPersonsEmailAddress(String city) {
-		
+
 		List<String> personEmail = new ArrayList<>();
-		
-		for(Person person: personRepository.findAll()) {
-			if(person.getCity().equals(city)) {
+
+		for (Person person : personRepository.findAll()) {
+			if (person.getCity().equals(city)) {
 				personEmail.add(person.getEmail());
-				
+
 			}
 		}
 		return personEmail;
 	}
-	
-	/* returns a list of children under 18 at each address and the adults at the same address
-	 * if there is no child at the address, it returns empty.
-	 * below is the url address
-     http://localhost:8080/childAlert?address=%3Caddress 
-     */
-	@SuppressWarnings("unchecked")
-	public JSONObject getChildrenFromEachAddress(String address) {
-		
-		List<Person> personsInAddress = new ArrayList<>();
-		List<JSONObject> adults = new ArrayList<>();
-		List<JSONObject> children = new ArrayList<>();	
-		personsInAddress = personRepository.findAll().stream().filter(e -> e.getAddress().equals(address)).collect(Collectors.toList());
-			
-		for(Person person: personsInAddress) {
-			if(person.getAge() <= 18) {
-			   JSONObject childDetails = new JSONObject();
-			   childDetails.put("firstName", person.getFirstName());
-			   childDetails.put("lastName", person.getLastName());
-			   childDetails.put("age", person.getAge());
-			   childDetails.put("address", person.getAddress());	
-			   
-			   children.add(childDetails);   
-			}
-			else {	
-				JSONObject adult = new JSONObject();
-			     adult.put("firstName", person.getFirstName());
-			     adult.put("lastName", person.getLastName());
-			     adult.put("address", person.getAddress());
 
-			   adults.add(adult);  
-			}		
-		} 
-		if(children.isEmpty()) {
-			return new JSONObject();
-		}
-		else {
-			JSONObject adultsPlusChildren = new JSONObject();
-			
-			adultsPlusChildren.put("children", children);
-			if(adults != null) {
-				adultsPlusChildren.put("adults", adults);
-					
+	/*
+	 * returns a list of children under 18 at each address and the adults at the
+	 * same address if there is no child at the address, it returns empty. Below is
+	 * the url address http://localhost:8080/childAlert?address=%3Caddress
+	 */
+
+	public ChildAlertDTO getChildrenFromEachAddress(String address) {
+
+		List<Person> personsInAddress = new ArrayList<>();
+		ChildAlertDTO result = new ChildAlertDTO();
+		ArrayList<PersonNamePlusAgeDTO> adults = new ArrayList<PersonNamePlusAgeDTO>();
+		ArrayList<PersonNamePlusAgeDTO> children = new ArrayList<PersonNamePlusAgeDTO>();
+		personsInAddress = personRepository.findAll().stream().filter(e -> e.getAddress().equals(address))
+				.collect(Collectors.toList());
+
+		for (Person person : personsInAddress) {
+			if (person.getAge() <= 18) {
+				PersonNamePlusAgeDTO child = new PersonNamePlusAgeDTO();
+				child.setFirstName(person.getFirstName());
+				child.setLastName(person.getLastName());
+				child.setAge(person.getAge());
+
+				children.add(child);
+			} else {
+				PersonNamePlusAgeDTO adult = new PersonNamePlusAgeDTO();
+				adult.setFirstName(person.getFirstName());
+				adult.setLastName(person.getLastName());
+				adult.setAge(person.getAge());
+
+				adults.add(adult);
 			}
-			return adultsPlusChildren;
 		}
+		if (children.isEmpty()) {
+			return null;
+		} else {
+			result.setAdults(adults);
+			result.setChildren(children);
+		}
+		return result;
+
 	}
 }
