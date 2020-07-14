@@ -3,7 +3,6 @@ package com.ocr.Javaproject5sna.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,11 +50,6 @@ public class FireStationService implements IFireStationService {
 		return fireStation;
 	}
 
-	public List<FireStation> getAllFireStation() {
-
-		return fireStationRepository.findAll();
-	}
-
 	public void updateAddressFSNumber(String stationNumber, String address) {
 
 		List<FireStation> fireStations = fireStationRepository.findAll();
@@ -87,8 +81,12 @@ public class FireStationService implements IFireStationService {
 				fireStation.removeAddress(address);
 				fireStationRepository.updateStation(fireStation);
 			}
-
 		}
+	}
+
+	public List<FireStation> findAll() {
+
+		return fireStationRepository.findAll();
 	}
 
 	// Url end points
@@ -160,7 +158,7 @@ public class FireStationService implements IFireStationService {
 		PersonInfoPlusAddressFromEachStationDTO detailsFromStationAddress = new PersonInfoPlusAddressFromEachStationDTO();
 		ArrayList<PersonInEachAddressDTO> personsDetails = new ArrayList<>();
 
-		for (FireStation fireStation : fireStationRepository.findAll()) {
+		for (FireStation fireStation : findAll()) {
 			if (fireStation.getAddresses().contains(address)) {
 				stationNumber = fireStation.getStationNumber();
 			}
@@ -197,7 +195,7 @@ public class FireStationService implements IFireStationService {
 		List<String> addressesInFireStation = new ArrayList<>();
 		List<EveryHouseHoldInfoDTO> addressesWithPersons = new ArrayList<>();
 
-		for (FireStation fireStation : fireStationRepository.findAll()) {
+		for (FireStation fireStation : findAll()) {
 			if (fireStation.getStationNumber().equals(stationNumber)) {
 				addressesInFireStation.addAll(fireStation.getAddresses());
 			}
@@ -216,10 +214,10 @@ public class FireStationService implements IFireStationService {
 					personInfo.setFirstName(person.getFirstName());
 					personInfo.setLastName(person.getLastName());
 					personInfo.setAge(person.getAge());
+					personInfo.setAddress(person.getAddress());
 					personInfo.setPhoneNumber(person.getPhone());
 					personInfo.setMedications(person.getMedication());
 					personInfo.setAllergies(person.getAllergies());
-
 					everybodyInfo.add(personInfo);
 				}
 			}
@@ -230,5 +228,15 @@ public class FireStationService implements IFireStationService {
 
 		return addressesWithPersons;
 
+	}
+
+	public FireStation findStation(String stationNumber) {
+		for (FireStation fireStation : fireStationRepository.findAll()) {
+			if (fireStation.getStationNumber().equals(stationNumber)) {
+				return fireStation;
+
+			}
+		}
+		return null;
 	}
 }
