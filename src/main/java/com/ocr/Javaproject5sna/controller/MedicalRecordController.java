@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,10 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.ocr.Javaproject5sna.dto.MedicalRecordDTO;
+import com.ocr.Javaproject5sna.dto.ResponseDTO;
 import com.ocr.Javaproject5sna.model.MedicalRecord;
+import com.ocr.Javaproject5sna.modelClass.NamesModelClass;
 import com.ocr.Javaproject5sna.repository.MedicalRecordRepository;
 import com.ocr.Javaproject5sna.service.MedicalRecordService;
 
@@ -51,42 +52,96 @@ public class MedicalRecordController {
 	}
 
 	@RequestMapping(value = "/medicalRecord", method = RequestMethod.POST)
-	public MedicalRecordDTO createMedicalRecord(@RequestBody MedicalRecord medicalRecord, BindingResult result) {
+	public ResponseDTO createMedicalRecord(@Valid @RequestBody MedicalRecord medicalRecord, BindingResult result,
+			HttpServletResponse response) {
 
 		if (!result.hasErrors()) {
 			medicalRecordService.createMedicalRecord(medicalRecord);
-			MedicalRecordDTO dto = new MedicalRecordDTO();
-			dto.setCreated(true);
+			ResponseDTO dto = new ResponseDTO();
+			dto.setSuccessful(true);
 
+			response.setStatus(HttpServletResponse.SC_CREATED);
+			return dto;
+		} else {
+
+			ResponseDTO dto = new ResponseDTO();
+			dto.setSuccessful(true);
+			dto.setErrors(result.hasErrors());
+
+			ArrayList<String> errorList = new ArrayList<>();
+
+			result.getAllErrors().forEach(error -> {
+				errorList.add(error.toString());
+			});
+
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+			return dto;
+		}
+
+	}
+
+	@RequestMapping(value = "/medicalRecord", method = RequestMethod.PUT)
+	public ResponseDTO updateMedicalRecord(@Valid @RequestBody MedicalRecord medicalRecord, BindingResult result,
+			HttpServletResponse response) {
+
+		if (!result.hasErrors()) {
+			medicalRecordService.updateMedicalRecord(medicalRecord);
+			ResponseDTO dto = new ResponseDTO();
+			dto.setSuccessful(true);
+
+			response.setStatus(HttpServletResponse.SC_OK);
 			return dto;
 
 		} else {
 
-			MedicalRecordDTO dto = new MedicalRecordDTO();
-			dto.setCreated(false);
-			dto.setErrors(result.hasFieldErrors());
+			ResponseDTO dto = new ResponseDTO();
+			dto.setSuccessful(true);
+			dto.setErrors(result.hasErrors());
+
+			ArrayList<String> errorList = new ArrayList<>();
+
+			result.getAllErrors().forEach(error -> {
+				errorList.add(error.toString());
+			});
+
+			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
 
 			return dto;
 		}
+
 	}
 
-	@RequestMapping(value = "/medicalRecord", method = RequestMethod.PUT)
-	public boolean updateMedicalRecord(@RequestBody MedicalRecord medicalRecord, BindingResult result) {
+	@RequestMapping(value = "/medicalRecord", method = RequestMethod.DELETE)
+	public ResponseDTO deleteMedicalRecord(@Valid @ModelAttribute NamesModelClass names, BindingResult result,
+			 HttpServletResponse response) {
 
 		if (!result.hasErrors()) {
-			medicalRecordService.updateMedicalRecord(medicalRecord);
-			
-			return true;
-		}else {
-          return false;
+		//	medicalRecordService.findMedicalRecord(names.getFirstName(), names.getLastName());
+			medicalRecordService.deleteMedicalRecord(names.getFirstName(), names.getLastName());
+
+			ResponseDTO dto = new ResponseDTO();
+			dto.setSuccessful(true);
+
+			response.setStatus(HttpServletResponse.SC_OK);
+			return dto;
+
+		} else {
+
+			ResponseDTO dto = new ResponseDTO();
+			dto.setSuccessful(true);
+			dto.setErrors(result.hasErrors());
+
+			ArrayList<String> errorList = new ArrayList<>();
+
+			result.getAllErrors().forEach(error -> {
+				errorList.add(error.toString());
+			});
+
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+
+			return dto;
 		}
+
 	}
-
-	@DeleteMapping("/medicalRecord")
-	public void deleteMedicalRecord(@RequestParam(value = "firstName") String firstName,
-			@RequestParam(value = "lastName") String lastName) {
-
-		medicalRecordService.deleteMedicalRecord(firstName, lastName);
-	}
-
 }
