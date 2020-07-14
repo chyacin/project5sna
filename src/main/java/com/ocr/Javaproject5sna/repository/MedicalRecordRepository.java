@@ -27,34 +27,34 @@ public class MedicalRecordRepository {
 
     // print list of all medical records
     public void printAll() {
-    	for (MedicalRecord medical : medicalRecordList) {
-    		System.out.println(medical.toString());
+    	for (MedicalRecord medicalRecord : medicalRecordList) {
+    		System.out.println(medicalRecord.toString());
     	}
     }
 
     //find medical record by person's name
     public MedicalRecord findMedicalRecord(String firstName, String lastName) {
-        for (MedicalRecord medical : medicalRecordList) {
-            if (medical.getFirstName().equals(firstName)
-                && medical.getLastName().equals(lastName)) {
-                return medical;
+        for (MedicalRecord medicalRecord : medicalRecordList) {
+            if (medicalRecord.getFirstName().equals(firstName)
+                && medicalRecord.getLastName().equals(lastName)) {
+                return medicalRecord;
             }
         }
         return null;
     }
 
     //add a new medical record
-    public MedicalRecord createMedicalRecord(MedicalRecord medical) {
-        medicalRecordList.add(medical);
-        return medical;
+    public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord) {
+        medicalRecordList.add(medicalRecord);
+        return medicalRecord;
     }
 
     //update an existing medical record.
-    public void updateMedicalRecord(MedicalRecord medical) {
-        MedicalRecord updateMedical = findMedicalRecord(medical.getFirstName(), medical.getLastName());
-        updateMedical.setBirthDate(medical.getBirthDate());
-        updateMedical.setMedications(medical.getMedications());
-        updateMedical.setAllergies(medical.getAllergies());
+    public void updateMedicalRecord(MedicalRecord medicalRecord) {
+        MedicalRecord updateMedical = findMedicalRecord(medicalRecord.getFirstName(), medicalRecord.getLastName());
+        updateMedical.setBirthDate(medicalRecord.getBirthDate());
+        updateMedical.setMedications(medicalRecord.getMedications());
+        updateMedical.setAllergies(medicalRecord.getAllergies());
     }
 
     //delete an existing medical record

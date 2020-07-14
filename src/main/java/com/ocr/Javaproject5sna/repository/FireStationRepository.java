@@ -44,16 +44,8 @@ public class FireStationRepository {
 
 //    //add a new firestation
     public FireStation createStation(FireStation fireStation) {
-        if(!alreadyExist(fireStation)) {       	
-         fireStationList.add(fireStation);  
-         return fireStation;
-        }
-        else {
-        FireStation existingFireStation = findStation(fireStation.getStationNumber());
-        existingFireStation.getAddresses().addAll(fireStation.getAddresses());
-        updateStation(existingFireStation);
-        }
-    	return null;
+        fireStationList.add(fireStation);
+        return fireStation;
     }
     
     public void addFireStation(FireStation fireStation) {
@@ -81,8 +73,6 @@ public class FireStationRepository {
         fireStationList.remove(deleteStation);
     }
     
-    private boolean alreadyExist(FireStation fireStation) {
-    	return fireStationList.stream().filter(e -> e.getStationNumber().equalsIgnoreCase(fireStation.getStationNumber())).count() >= 1;
-    }
+    
 
 }
