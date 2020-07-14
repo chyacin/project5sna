@@ -6,21 +6,21 @@ import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 
-public class MedicalRecordDTO {
+public class ResponseDTO {
 
-	public MedicalRecordDTO() {
+	public ResponseDTO() {
 
 	}
 
-	private boolean created;
-	private boolean errors;
+	private boolean success;
+	private  boolean errors;
 
-	public boolean isCreated() {
-		return created;
+	public boolean isSuccessful() {
+		return success;
 	}
 
-	public void setCreated(boolean created) {
-		this.created = created;
+	public void setSuccessful(boolean success) {
+		this.success = success;
 	}
 
 	public boolean getErrors() {

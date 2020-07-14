@@ -1,9 +1,14 @@
 package com.ocr.Javaproject5sna.dto;
 
+import javax.validation.constraints.NotBlank;
+
 public class PersonNamePlusAgeDTO {
 
+	@NotBlank
 	private String firstName;
+	@NotBlank
 	private String lastName;
+	@NotBlank
 	private int age;
 
 	public PersonNamePlusAgeDTO() {
