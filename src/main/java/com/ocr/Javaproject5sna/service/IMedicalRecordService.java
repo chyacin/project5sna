@@ -7,5 +7,6 @@ import com.ocr.Javaproject5sna.model.MedicalRecord;
 public interface IMedicalRecordService {
 	
 	public MedicalRecord createMedicalRecord(MedicalRecord medicalRecord);
-	public List<MedicalRecord> getAllMedicalRecord();
+	public void updateMedicalRecord(MedicalRecord medicalRecord);
+	public void deleteMedicalRecord(String firstName, String lastName);
 }
