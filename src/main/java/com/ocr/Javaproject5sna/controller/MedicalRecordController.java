@@ -105,7 +105,7 @@ public class MedicalRecordController {
 				errorList.add(error.toString());
 			});
 
-			response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
+			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
 			return dto;
 		}

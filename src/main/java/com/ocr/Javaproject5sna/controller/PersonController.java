@@ -160,7 +160,6 @@ public class PersonController {
 			if (result.hasErrors()) {
 			}
 			dto = new ChildAlertDTO();
-
 			ArrayList<String> errorList = new ArrayList<>();
 
 			result.getAllErrors().forEach(error -> {
@@ -184,15 +183,6 @@ public class PersonController {
 
 			response.setStatus(HttpServletResponse.SC_OK);
 
-		} else if (result.hasErrors()) {
-			ArrayList<String> errorList = new ArrayList<>();
-
-			result.getAllErrors().forEach(error -> {
-				errorList.add(error.toString());
-			});
-
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return dto;
 		}
 		return dto;
 
