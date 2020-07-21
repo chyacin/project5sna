@@ -146,7 +146,37 @@ public class MedicalRecordControllerTest {
 		Assert.assertTrue(result.isSuccessful());
 		Assert.assertFalse(result.getErrors());
 	}
-	
+
+	@Test
+	public void testUpdateMedicalRecordWithoutNames() throws Exception {
+
+		Set<String> medications = new HashSet<String>();
+		medications.add("thradox:700mg");
+
+		Set<String> allergies = new HashSet<String>();
+		allergies.add("peanut");
+
+		MedicalRecord medicalRecord = new MedicalRecord();
+		medicalRecord.setFirstName("");
+		medicalRecord.setLastName("");
+		medicalRecord.setBirthDate("09/09/1989");
+		medicalRecord.setMedications(medications);
+		medicalRecord.setAllergies(allergies);
+
+		when(medicalRecordService.findMedicalRecord("Joe", "Bing")).thenReturn(medicalRecord);
+
+		String json = objectMapper.writeValueAsString(medicalRecord);
+
+		MvcResult mvcResult = mockMvc
+				.perform(put("/medicalRecord").contentType(MediaType.APPLICATION_JSON).content(json)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType("application/json")).andExpect(status().isBadRequest()).andReturn();
+
+		ResponseDTO result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ResponseDTO.class);
+
+		//Assert.assertTrue(result.isSuccessful());
+		Assert.assertTrue(result.getErrors());
+	}
 
 	@Test
 	public void testDeleteMedicalRecord() throws Exception {
@@ -167,5 +197,24 @@ public class MedicalRecordControllerTest {
 		Assert.assertFalse(result.getErrors());
 		
 	}
-	
+
+	@Test
+	public void testDeleteMedicalRecordWithoutLastName() throws Exception {
+
+		MvcResult mvcResult = mockMvc.perform(delete("/medicalRecord")
+				.param("firstName", "Joe")
+				.param("lastName", "")
+				.param("birthdate", "09/09/1989")
+				.param("medications", "thradox:700mg")
+				.param("allergies","peanut")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType("application/json")).andExpect(status().isBadRequest()).andReturn();
+
+		ResponseDTO result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ResponseDTO.class);
+
+
+		Assert.assertTrue(result.getErrors());
+
+	}
 }

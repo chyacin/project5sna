@@ -113,6 +113,22 @@ public class PersonControllerTest {
 	}
 
 	@Test
+	public void testUpdatePersonMissingNames() throws Exception {
+
+		String json = (" {\"firstName\":\"\",\"lastName\":\"\", \"address\":\"1509 Culver St\", \"city\":\"Culver\", \"zip\":\"97451\", \"phone\":\"841-874-6512\", \"email\":\"jaboyd@email.com\" }");
+
+		MvcResult mvcResult = mockMvc
+				.perform(put("/person").contentType(MediaType.APPLICATION_JSON).content(json)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType("application/json")).andExpect(status().isBadRequest()).andReturn();
+
+		ResponseDTO result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ResponseDTO.class);
+
+		Assert.assertTrue(result.getErrors());
+
+	}
+
+	@Test
 	public void testDeletePerson() throws Exception {
 
 //		String json = (" {\"firstName\":\"John\",\"lastName\":\"Boyd\", \"address\":\"1509 Culver St\", \"city\":\"Culver\", \"zip\":\"97451\", \"phone\":\"841-874-6512\", \"email\":\"jaboyd@email.com\" }");
@@ -128,6 +144,24 @@ public class PersonControllerTest {
 
 		Assert.assertTrue(result.isSuccessful());
 		Assert.assertFalse(result.getErrors());
+
+	}
+
+	@Test
+	public void testDeletePersonMissingFirstName() throws Exception {
+
+//		String json = (" {\"firstName\":\"John\",\"lastName\":\"Boyd\", \"address\":\"1509 Culver St\", \"city\":\"Culver\", \"zip\":\"97451\", \"phone\":\"841-874-6512\", \"email\":\"jaboyd@email.com\" }");
+
+		MvcResult mvcResult = mockMvc
+				.perform(delete("/person").param("firstName", "").param("lastName", "Bing")
+						.param("address", "1509 Culver St").param("city", "Culver").param("zip", "97451")
+						.param("phone", "841-874-6512").param("email", "jaboyd@email.com")
+						.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType("application/json")).andExpect(status().isBadRequest()).andReturn();
+
+		ResponseDTO result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ResponseDTO.class);
+
+		Assert.assertTrue(result.getErrors());
 
 	}
 

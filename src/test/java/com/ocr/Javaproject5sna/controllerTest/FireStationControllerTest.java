@@ -159,6 +159,36 @@ public class FireStationControllerTest {
 	}
 
 	@Test
+	public void testUpdateFirestationAddressMappingMissingStationNumber() throws Exception {
+
+		FireStation fireStation = new FireStation();
+		String stationNumber = "";
+		String address = "188 Culver St ";
+		Set<String> addresses = new HashSet<>();
+		addresses.add(address);
+		fireStation.addAddress(address);
+		fireStation.setStationNumber(stationNumber);
+		List<FireStation> fireStations = new ArrayList<>();
+		fireStations.add(fireStation);
+		Mockito.when(fireStationService.createFSAddressmapping(stationNumber, address)).thenReturn(fireStation);
+		Mockito.when(fireStationService.findAll()).thenReturn(fireStations);
+
+		String json = objectMapper.writeValueAsString(fireStations);
+
+		MvcResult mvcResult = mockMvc
+				.perform(put("/firestation").param("stationNumber", stationNumber)
+						.param("address", addresses.toString())
+						.flashAttr("fireStationUpdated", new StationNum_AddressModelClass())
+						.contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
+
+		ResponseDTO result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), ResponseDTO.class);
+
+		Assert.assertTrue(result.getErrors());
+
+	}
+
+	@Test
 	public void testDeleteFirestationAddressMapping() throws Exception {
 		
 		FireStation fireStation = new FireStation();
@@ -281,34 +311,41 @@ public class FireStationControllerTest {
 	}
 	
 	
-//	@Test
-//	public void testPersonsByFireStationNumber() throws Exception{
-//		
-//		String stationNumber = "3";
-//		String address = "1509 Culver St";
-//		Set<String> medications = new HashSet<String>();
-//		medications.add("aznol:350mg, hydrapermazol:100mg");
-//		Set<String> allergies = new HashSet<>();
-//		allergies.add("nilliacilan");
-//		ArrayList<PersonInEachAddressDTO> everybodyInfo = new ArrayList<>();
-//		List<String> addressesInFireStation = new ArrayList<>();
-//		List<EveryHouseHoldInfoDTO> addressesWithPersons = new ArrayList<>();
-//		PersonInEachAddressDTO personInfo = new PersonInEachAddressDTO("John", "Boyd", "1509 Culver St", "8686-988-9887" ,36,
-//				medications, allergies);
-//		
-//		everybodyInfo.add(personInfo);
-//		
-//				
-//		EveryHouseHoldInfoDTO dto = new EveryHouseHoldInfoDTO(address, everybodyInfo);
-//		
-//		MvcResult mvcResult = mockMvc.perform(get("/stations").param("stationNumber", stationNumber)
-//				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-//				.andExpect(content().contentType("application/json")).andExpect(status().isOk())
-//				.andReturn();
-//		List<EveryHouseHoldInfoDTO> result = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-//				new TypeReference<List<EveryHouseHoldInfoDTO>>() {
-//		});
-//		
-//		
-//	}
+	@Test
+	public void testPersonsByFireStationNumber() throws Exception{
+
+		String stationNumber = "3";
+
+		Set<String> medications = new HashSet<String>();
+		medications.add("aznol:350mg, hydrapermazol:100mg");
+		Set<String> allergies = new HashSet<>();
+		allergies.add("nilliacilan");
+
+		PersonInEachAddressDTO personInfo = new PersonInEachAddressDTO("John", "Boyd", "1509 Culver St", "8686-988-9887" ,36,
+				medications, allergies);
+		ArrayList<PersonInEachAddressDTO> personInfoList = new ArrayList<>();
+		personInfoList.add(personInfo);
+
+		String address = "1509 Culver St";
+		
+		EveryHouseHoldInfoDTO dto = new EveryHouseHoldInfoDTO(address, personInfoList);
+
+
+		List<EveryHouseHoldInfoDTO> addressesWithPersons = new ArrayList<>();
+		
+		addressesWithPersons.add(dto);
+
+		Mockito.when(fireStationService.getPersonByHouseHoldsInEachStationNumber(stationNumber)).thenReturn(addressesWithPersons);
+
+
+		MvcResult mvcResult = mockMvc.perform(get("/flood/stations").param("stationNumber", stationNumber)
+				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentType("application/json")).andExpect(status().isOk())
+				.andReturn();
+		List<EveryHouseHoldInfoDTO> result = this.objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+				new TypeReference<List<EveryHouseHoldInfoDTO>>() {
+		});
+
+		assertEquals(1, result.size());
+	}
 }
