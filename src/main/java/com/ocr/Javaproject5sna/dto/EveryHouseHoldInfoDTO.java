@@ -14,6 +14,7 @@ public class EveryHouseHoldInfoDTO {
 	public EveryHouseHoldInfoDTO(String address, ArrayList<PersonInEachAddressDTO> everybodyInfo ) {
         this.address = address;
         this.everybodyInfo = everybodyInfo;
+
 		
 	}
 
