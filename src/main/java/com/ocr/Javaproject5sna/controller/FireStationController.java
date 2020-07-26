@@ -45,17 +45,6 @@ public class FireStationController {
 		this.fireStationService = fireStationService;
 	}
 
-//	@RequestMapping(value = "/firestation", method = RequestMethod.POST,
-//			produces = "application/json")
-//	public ResponseEntity <String> createFSAddressMapping(@RequestParam("stationNumber") String stationNumber,
-//			@RequestParam("address") String address, HttpHeaders httpHeaders, HttpServletResponse response) { 
-//		
-//		 httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-//		 
-//	 return new ResponseEntity ("{\"station\":\"3\",\"address\":\"15 Soft St\"}", httpHeaders, response.SC_CREATED);
-
-//	}
-
 	@RequestMapping(value = "/firestation", method = RequestMethod.POST)
 	public ResponseDTO createFSAddressMapping(
 			@Valid @ModelAttribute("fireStationCreated") StationNum_AddressModelClass modelClass, BindingResult result,
@@ -169,8 +158,9 @@ public class FireStationController {
 	}
 
 	@RequestMapping(value = "/phoneAlert", method = RequestMethod.GET)
-	public List<String> getPersonByPhoneAlert(@Valid @ModelAttribute("stationNumber") String stationNumber,
+	public List<String> getPersonByPhoneAlert(@Valid @ModelAttribute("firestation") String stationNumber,
 			BindingResult result, HttpServletResponse response) {
+		
 		List<String> endResult = null;
 
 		if (!result.hasErrors()) {
@@ -196,7 +186,7 @@ public class FireStationController {
 	}
 
 	@RequestMapping(value = "/flood/stations", method = RequestMethod.GET)
-	public List<EveryHouseHoldInfoDTO> getPersonsByFireStationNumber(@Valid @ModelAttribute("stationNumber") String stationNumber,
+	public List<EveryHouseHoldInfoDTO> getPersonsByFireStationNumber(@Valid @ModelAttribute("stations") String stationNumber,
 			BindingResult result, HttpServletResponse response) {
 
 		List<EveryHouseHoldInfoDTO> dto = null;
