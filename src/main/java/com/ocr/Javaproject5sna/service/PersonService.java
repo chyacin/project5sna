@@ -106,7 +106,7 @@ public class PersonService implements IPersonService {
 		
 		List<String> personEmail = new ArrayList<>();
 
-		for (Person person : findAll()) {
+		for (Person person : personRepository.findAll()) {
 			if (person.getCity().equals(city)) {
 				personEmail.add(person.getEmail());
 
@@ -118,7 +118,8 @@ public class PersonService implements IPersonService {
 	/*
 	 * returns a list of children under 18 at each address and the adults at the
 	 * same address if there is no child at the address, it returns empty. Below is
-	 * the url address http://localhost:8080/childAlert?address=%3Caddress
+	 * the url address 
+	 * http://localhost:8080/childAlert?address=%3Caddress
 	 */
 
 	public ChildAlertDTO getChildrenFromEachAddress(String address) {
@@ -128,7 +129,7 @@ public class PersonService implements IPersonService {
 		ArrayList<PersonNamePlusAgeDTO> adults = new ArrayList<PersonNamePlusAgeDTO>();
 		ArrayList<PersonNamePlusAgeDTO> children = new ArrayList<PersonNamePlusAgeDTO>();
 		
-		for(Person person: findAll()) {
+		for(Person person: personRepository.findAll()) {
 			if(person.getAddress().equals(address)) {
 				personsInAddress.add(person);
 			}
@@ -160,7 +161,4 @@ public class PersonService implements IPersonService {
 		return result;
 
 	}
-	
-//	personsInAddress = personRepository.findAll().stream().filter(e -> e.getAddress().equals(address))
-//			.collect(Collectors.toList());
 }
