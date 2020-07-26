@@ -20,8 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+
 import static org.mockito.Mockito.doNothing;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +44,7 @@ import com.ocr.Javaproject5sna.dto.PersonInfoPlusAddressFromEachStationDTO;
 import com.ocr.Javaproject5sna.dto.ResponseDTO;
 import com.ocr.Javaproject5sna.model.FireStation;
 import com.ocr.Javaproject5sna.modelClass.StationNum_AddressModelClass;
+import com.ocr.Javaproject5sna.repository.FireStationRepository;
 import com.ocr.Javaproject5sna.service.FireStationService;
 
 @RunWith(SpringRunner.class)
@@ -58,6 +58,9 @@ public class FireStationControllerTest {
 
 	@MockBean
 	private FireStationService fireStationService;
+	
+	@MockBean
+	private FireStationRepository fireStationRepository;
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -140,7 +143,7 @@ public class FireStationControllerTest {
 		List<FireStation> fireStations = new ArrayList<>();
 		fireStations.add(fireStation);
 		Mockito.when(fireStationService.createFSAddressmapping(stationNumber, address)).thenReturn(fireStation);
-		Mockito.when(fireStationService.findAll()).thenReturn(fireStations);
+		Mockito.when(fireStationRepository.findAll()).thenReturn(fireStations);
 
 		String json = objectMapper.writeValueAsString(fireStations);
 
@@ -171,7 +174,7 @@ public class FireStationControllerTest {
 		List<FireStation> fireStations = new ArrayList<>();
 		fireStations.add(fireStation);
 		Mockito.when(fireStationService.createFSAddressmapping(stationNumber, address)).thenReturn(fireStation);
-		Mockito.when(fireStationService.findAll()).thenReturn(fireStations);
+		Mockito.when(fireStationRepository.findAll()).thenReturn(fireStations);
 
 		String json = objectMapper.writeValueAsString(fireStations);
 
@@ -201,7 +204,7 @@ public class FireStationControllerTest {
 		List<FireStation> fireStations = new ArrayList<>();
 	    fireStations.add(fireStation);
 	    
-		Mockito.when(fireStationService.findAll()).thenReturn(fireStations);
+		Mockito.when(fireStationRepository.findAll()).thenReturn(fireStations);
 		doNothing().when(fireStationService).deleteFSAddressMapping(stationNumber, address);
 		
 
@@ -266,7 +269,7 @@ public class FireStationControllerTest {
 		
 		Mockito.when(fireStationService.getPersonPhoneNumberFromFireStationNumber(stationNumber)).thenReturn(phoneNumberOfEachPerson);
 		
-		MvcResult mvcResult = mockMvc.perform(get("/phoneAlert").param("stationNumber", stationNumber)
+		MvcResult mvcResult = mockMvc.perform(get("/phoneAlert").param("firestation", stationNumber)
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
 				.andExpect(content().contentType("application/json")).andExpect(status().isOk()).andReturn();
 		
@@ -338,7 +341,7 @@ public class FireStationControllerTest {
 		Mockito.when(fireStationService.getPersonByHouseHoldsInEachStationNumber(stationNumber)).thenReturn(addressesWithPersons);
 
 
-		MvcResult mvcResult = mockMvc.perform(get("/flood/stations").param("stationNumber", stationNumber)
+		MvcResult mvcResult = mockMvc.perform(get("/flood/stations").param("stations", stationNumber)
 				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
 				.andExpect(content().contentType("application/json")).andExpect(status().isOk())
 				.andReturn();
