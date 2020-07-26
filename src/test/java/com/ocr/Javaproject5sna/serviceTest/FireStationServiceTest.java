@@ -39,6 +39,7 @@ public class FireStationServiceTest {
 	@Mock
 	FireStationRepository fireStationRepository;
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void createFSAddressMapping_returnFSAddressMapping() {
 

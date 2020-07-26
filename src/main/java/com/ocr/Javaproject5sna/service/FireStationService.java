@@ -2,6 +2,7 @@ package com.ocr.Javaproject5sna.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,10 +85,14 @@ public class FireStationService implements IFireStationService {
 		}
 	}
 
-	public List<FireStation> findAll() {
-
-		return fireStationRepository.findAll();
-	}
+//	public List<FireStation> findAll() {
+//
+//		return fireStationRepository.findAll();
+//	}
+	
+//	public FireStation findStation(String stationNumber) {
+//		return fireStationRepository.findStation(stationNumber);
+//	}
 
 	// Url end points
 
@@ -129,15 +134,15 @@ public class FireStationService implements IFireStationService {
 
 	/*
 	 * returns the phone Numbers of persons within a fireStation below is the url
-	 * address http://localhost:8080/phoneAlert?firestation=<firestation_number>
+	 * address 
+	 * http://localhost:8080/phoneAlert?firestation=<firestation_number>
 	 */
 	public List<String> getPersonPhoneNumberFromFireStationNumber(String stationNumber) {
 
 		List<String> phoneNumberOfEachPerson = new ArrayList<>();
 
 		for (FireStation fireStation : fireStationRepository.findAll()) {
-			if (fireStation.getStationNumber().equals(stationNumber)) {
-
+			if (fireStation.getStationNumber().contentEquals(stationNumber)) {
 				for (Person person : fireStation.getPersonList()) {
 					phoneNumberOfEachPerson.add(person.getPhone());
 				}
@@ -155,10 +160,10 @@ public class FireStationService implements IFireStationService {
 	public PersonInfoPlusAddressFromEachStationDTO getAddressFromEachStation(String address) {
 
 		String stationNumber = null;
-		PersonInfoPlusAddressFromEachStationDTO detailsFromStationAddress = new PersonInfoPlusAddressFromEachStationDTO();
+		PersonInfoPlusAddressFromEachStationDTO personDetailsFromEachStationAddress = new PersonInfoPlusAddressFromEachStationDTO();
 		ArrayList<PersonInEachAddressDTO> personsDetails = new ArrayList<>();
 
-		for (FireStation fireStation : findAll()) {
+		for (FireStation fireStation : fireStationRepository.findAll()) {
 			if (fireStation.getAddresses().contains(address)) {
 				stationNumber = fireStation.getStationNumber();
 			}
@@ -180,30 +185,31 @@ public class FireStationService implements IFireStationService {
 				}
 			}
 
-			detailsFromStationAddress.setStationNumber(stationNumber);
-			detailsFromStationAddress.setPersonsInAddress(personsDetails);
+			personDetailsFromEachStationAddress.setStationNumber(stationNumber);
+			personDetailsFromEachStationAddress.setPersonsInAddress(personsDetails);
 		}
-		return detailsFromStationAddress;
+		return personDetailsFromEachStationAddress;
 	}
 
 	/*
 	 * return houseHolds with persons in each fireStation jurisdiction below is the
-	 * url address. http://localhost:8080/flood/stations?stations=%3Ca
+	 * url address.
+	 *  http://localhost:8080/flood/stations?stations=%3Ca
 	 */
 	public List<EveryHouseHoldInfoDTO> getPersonByHouseHoldsInEachStationNumber(String stationNumber) {
 
-		List<String> addressesInFireStation = new ArrayList<>();
-		List<EveryHouseHoldInfoDTO> addressesWithPersons = new ArrayList<>();
+		List<String> allAddressesInEachStation = new ArrayList<>();
+		List<EveryHouseHoldInfoDTO> personsWithAddressByEachStationNumber = new ArrayList<>();
 
-		for (FireStation fireStation : findAll()) {
+		for (FireStation fireStation : fireStationRepository.findAll()) {
 			if (fireStation.getStationNumber().equals(stationNumber)) {
-				addressesInFireStation.addAll(fireStation.getAddresses());
+				allAddressesInEachStation.addAll(fireStation.getAddresses());
 			}
 		}
-		for (String address : addressesInFireStation) {
+		for (String address : allAddressesInEachStation) {
 
 			EveryHouseHoldInfoDTO eachHouseHoldWithPersons = new EveryHouseHoldInfoDTO();
-			eachHouseHoldWithPersons.setAddress(address);
+			eachHouseHoldWithPersons.addAddress(address);
 
 			ArrayList<PersonInEachAddressDTO> everybodyInfo = new ArrayList<>();
 			for (Person person : personRepository.findAll()) {
@@ -223,20 +229,10 @@ public class FireStationService implements IFireStationService {
 			}
 			eachHouseHoldWithPersons.setEverybodyInfo(everybodyInfo);
 
-			addressesWithPersons.add(eachHouseHoldWithPersons);
+			personsWithAddressByEachStationNumber.add(eachHouseHoldWithPersons);
 		}
 
-		return addressesWithPersons;
+		return personsWithAddressByEachStationNumber;
 
-	}
-
-	public FireStation findStation(String stationNumber) {
-		for (FireStation fireStation : fireStationRepository.findAll()) {
-			if (fireStation.getStationNumber().equals(stationNumber)) {
-				return fireStation;
-
-			}
-		}
-		return null;
 	}
 }
