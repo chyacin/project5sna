@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,8 @@ import com.ocr.Javaproject5sna.model.MedicalRecord;
 
 @Repository
 public class MedicalRecordRepository {
+
+    Logger log = LoggerFactory.getLogger(MedicalRecordRepository.class);
 
 	private static List<MedicalRecord> medicalRecordList = new ArrayList<>();
 
@@ -28,7 +32,8 @@ public class MedicalRecordRepository {
     // print list of all medical records
     public void printAll() {
     	for (MedicalRecord medicalRecord : medicalRecordList) {
-    		System.out.println(medicalRecord.toString());
+    	    log.info(medicalRecord.toString());
+    	//	System.out.println(medicalRecord.toString());
     	}
     }
 

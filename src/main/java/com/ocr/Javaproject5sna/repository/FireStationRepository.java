@@ -3,6 +3,8 @@ package com.ocr.Javaproject5sna.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,7 @@ import com.ocr.Javaproject5sna.model.FireStation;
 @Repository
 public class FireStationRepository {
 
+    Logger log = LoggerFactory.getLogger(FireStationRepository.class);
 	private  List<FireStation> fireStationList = new ArrayList<>();
  	
 	public void setFireStation(List<FireStation> fireStationList) {
@@ -20,12 +23,16 @@ public class FireStationRepository {
     //get list of all firestations
     public List<FireStation> findAll() {
         return fireStationList;
+
     }
+    
+
 
    //print list of all firestations
     public void printAll() {
     	for (FireStation fireStation : fireStationList) {
-    		System.out.println(fireStation.toString());
+    	    log.info(fireStation.toString());
+    	//	System.out.println(fireStation.toString());
     	}
     }
 

@@ -3,6 +3,8 @@ package com.ocr.Javaproject5sna.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +12,8 @@ import com.ocr.Javaproject5sna.model.Person;
 
 @Repository
 public class PersonRepository {
+
+	Logger log = LoggerFactory.getLogger(PersonRepository.class);
 
 	private List<Person> personList;
 
@@ -26,7 +30,8 @@ public class PersonRepository {
 	//print list of all persons
 	public void printAll() {
 		for (Person person : personList) {
-			System.out.println(person.toString());
+			log.info(person.toString());
+		//	System.out.println(person.toString());
 		}
 	}
 
