@@ -13,9 +13,4 @@ public class Pro5SnaApplication {
 		SpringApplication.run(Pro5SnaApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-		return args -> {
-		};
-	}
 }

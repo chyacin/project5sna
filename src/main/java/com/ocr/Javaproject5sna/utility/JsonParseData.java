@@ -69,10 +69,13 @@ public class JsonParseData {
 			
 			//Associate Firestation to Person
 			associatePersonToFireStation();
-			
+					
 			System.out.println();
+
 			personRepository.printAll();
+			
 			fireStationRepository.printAll();
+			
             medicalRecordRepository.printAll();
 			
 		}	
