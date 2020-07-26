@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.ocr.Javaproject5sna.model.Person;
 
@@ -22,7 +23,7 @@ public class FireStation {
 
 	}
 
-	@NotBlank
+	@NotNull
 	private Set<String> addresses = new HashSet<>();
 	@NotBlank
 	private String stationNumber;
